@@ -5752,8 +5752,8 @@ MonoBehaviour:
   click_down_timestamp: 0
   click_up_timestamp: 0
   max_duration: 5
-  bounce: {fileID: 0}
-  no_bounce: {fileID: 0}
+  hit_counter: 0
+  score: {fileID: 802457553}
 --- !u!50 &936284112
 Rigidbody2D:
   serializedVersion: 4
