@@ -69,36 +69,6 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        // check if hit was planet
-        Debug.Log(other.transform.parent);
-        if (other.transform.parent.gameObject.tag == "Planet")
-        {
-            Debug.Log(Time.time - last_hit_time);
-            if (Time.time - last_hit_time < 0.8f)
-            {
-                ChangeMaterialToNotBounce();
-            }
-            last_hit_time = Time.time;
-        }
-
-    }
-
-    private void OnTriggerEnter(Collider2D other)
-    {
-        // check if hit was planet
-        // Debug.Log(other.transform.parent);
-        // if (other.transform.parent.gameObject.tag == "Planet")
-        // {
-        //     Debug.Log(Time.time - last_hit_time);
-        //     if (Time.time - last_hit_time < 0.8f)
-        //     {
-        //         ChangeMaterialToNotBounce();
-        //     }
-        //     last_hit_time = Time.time;
-        // }
-    }
 
     public void ChangeMaterialToBounce()
     {
