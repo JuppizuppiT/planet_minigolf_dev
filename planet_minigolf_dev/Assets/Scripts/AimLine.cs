@@ -6,6 +6,7 @@ public class AimLine : MonoBehaviour
 {
     public Transform player;
     public LineRenderer lineRenderer;
+    public float lineLength = 2f;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,15 +32,33 @@ public class AimLine : MonoBehaviour
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 targetvec = mousePos - playerPos;
         targetvec.Normalize();
-        Vector2 target = playerPos + targetvec * 2;
-        Debug.Log(targetvec);
-        Debug.Log(target);
-        Vector2[] positions =
-            new Vector2[2]
+        Vector2 target;
+        if (Input.GetMouseButton(0))
+        {
+            Movement movement_player = player.GetComponent(typeof(Movement)) as Movement;
+            float length = (2 * (Time.time - movement_player.click_down_timestamp)/movement_player.max_duration);
+            if (length > lineLength)
             {
-                playerPos,
-                target,
-            };
+                length = lineLength;
+            }
+            lineRenderer.startColor = Color.red;
+            lineRenderer.endColor = Color.red;
+            target = playerPos + targetvec * length;
+        }
+        else
+        {
+            // change color of LineRenderer to red
+            lineRenderer.startColor = Color.white;
+            lineRenderer.endColor = Color.white;
+            target = playerPos + targetvec * lineLength;
+        }
+        Vector2[] positions =
+        new Vector2[2]
+        {
+            playerPos,
+            target,
+        };
         DrawLine(positions);
+         
     }
 }
