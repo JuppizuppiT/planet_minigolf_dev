@@ -1,2 +1,2 @@
-#project for uni
+# project for uni
 game
