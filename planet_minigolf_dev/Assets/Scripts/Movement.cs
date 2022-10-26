@@ -33,8 +33,6 @@ public class Movement : MonoBehaviour
         }
         //collider_player = transform.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
     }
-
-    // Update is called once per frame
     void Update()
     {
         var move =
@@ -62,45 +60,20 @@ public class Movement : MonoBehaviour
     void CalculateGravity()
     {
         Vector3[] forces = new Vector3[planets.Length];
-        //float delta = -0.001f;
-
         for (int i = 0; i < planets.Length; i++)
         {
             var planet = planets[i];
             var direction = planet.transform.position - transform.position;
             var distance = direction.magnitude;
-            var force = direction.normalized * 10 / (distance * distance);
-            //CircleCollider2D collider_planet = planet.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
-            //if (distance < collider_planet.bounds.extents[0] + collider_player.bounds.extents[0] + delta)
-            //{
-            //    if (Time.time - lastHit[i] < 0.001 && Time.time - click_up_timestamp > 0.2)
-            //    {
-            //        ChangeMaterialToNotBounce();
-            //    }
-            //    lastHit[i] = Time.time;
-            //}
-            GetComponent<Rigidbody2D>().AddForce(force);
+            CircleCollider2D collider_planet = planet.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
+            float radius = collider_planet.bounds.extents[0];
+            if (planet.tag == "Planet")
+            {
+                var force = radius * direction.normalized * 2500 * Time.deltaTime/ (distance * distance);
+                GetComponent<Rigidbody2D>().AddForce(force);
+            }
         }
     }
-
-
-    //public void ChangeMaterialToBounce()
-    //{
-    //    var collider = GetComponent<Collider2D>();
-    //    var rigidbody = GetComponent<Rigidbody2D>();
-    //    collider.sharedMaterial = bounce;
-    //    rigidbody.sharedMaterial = bounce;
-    //    Debug.Log("Bounce");
-    //}
-
-    //public void ChangeMaterialToNotBounce()
-    //{
-    //    var collider = GetComponent<Collider2D>();
-    //    var rigidbody = GetComponent<Rigidbody2D>();
-    //    collider.sharedMaterial = no_bounce;
-    //    rigidbody.sharedMaterial = no_bounce;
-    //    Debug.Log("Changed material to no bounce");
-    //}
 
     void MoveBall(float click_duration)
     {
