@@ -5,12 +5,14 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     public GameObject[] planets;
+    public float[] lastHit;
 
     public float speed = 15.0f;
 
     public float speed_factor = 10.0f;
 
     public float click_down_timestamp = 0.0f;
+    public float click_up_timestamp = 0.0f;
 
     public float max_duration = 5f;
 
@@ -18,12 +20,18 @@ public class Movement : MonoBehaviour
 
     public PhysicsMaterial2D no_bounce; //assigned in the editor
 
-    public float last_hit_time = 0.0f;
+    //CircleCollider2D collider_player;
 
     // Start is called before the first frame update
     void Start()
     {
         planets = GameObject.FindGameObjectsWithTag("Planet");
+        lastHit = new float[planets.Length];
+        for (int i = 0; i < planets.Length; i++)
+        {
+            lastHit[i] = 0;
+        }
+        //collider_player = transform.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
     }
 
     // Update is called once per frame
@@ -42,7 +50,7 @@ public class Movement : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            float click_up_timestamp = Time.time;
+            click_up_timestamp = Time.time;
             float click_duration = click_up_timestamp - click_down_timestamp;
 
             MoveBall (click_duration);
@@ -54,36 +62,45 @@ public class Movement : MonoBehaviour
     void CalculateGravity()
     {
         Vector3[] forces = new Vector3[planets.Length];
+        //float delta = -0.001f;
 
-        foreach (var planet in planets)
+        for (int i = 0; i < planets.Length; i++)
         {
+            var planet = planets[i];
             var direction = planet.transform.position - transform.position;
             var distance = direction.magnitude;
             var force = direction.normalized * 10 / (distance * distance);
-
-            //forces.Append(force);
+            //CircleCollider2D collider_planet = planet.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
+            //if (distance < collider_planet.bounds.extents[0] + collider_player.bounds.extents[0] + delta)
+            //{
+            //    if (Time.time - lastHit[i] < 0.001 && Time.time - click_up_timestamp > 0.2)
+            //    {
+            //        ChangeMaterialToNotBounce();
+            //    }
+            //    lastHit[i] = Time.time;
+            //}
             GetComponent<Rigidbody2D>().AddForce(force);
         }
-        foreach (var force in forces)
-        {
-        }
     }
 
 
-    public void ChangeMaterialToBounce()
-    {
-        var collider = GetComponent<Collider2D>();
-        Debug.Log(collider);
-        collider.sharedMaterial = bounce;
-        Debug.Log("Bounce");
-    }
+    //public void ChangeMaterialToBounce()
+    //{
+    //    var collider = GetComponent<Collider2D>();
+    //    var rigidbody = GetComponent<Rigidbody2D>();
+    //    collider.sharedMaterial = bounce;
+    //    rigidbody.sharedMaterial = bounce;
+    //    Debug.Log("Bounce");
+    //}
 
-    public void ChangeMaterialToNotBounce()
-    {
-        var collider = GetComponent<Collider2D>();
-        collider.sharedMaterial = no_bounce;
-        Debug.Log("Changed material to no bounce");
-    }
+    //public void ChangeMaterialToNotBounce()
+    //{
+    //    var collider = GetComponent<Collider2D>();
+    //    var rigidbody = GetComponent<Rigidbody2D>();
+    //    collider.sharedMaterial = no_bounce;
+    //    rigidbody.sharedMaterial = no_bounce;
+    //    Debug.Log("Changed material to no bounce");
+    //}
 
     void MoveBall(float click_duration)
     {
@@ -105,6 +122,6 @@ public class Movement : MonoBehaviour
         //forces.Append(force);
         GetComponent<Rigidbody2D>().AddForce(force);
         this.GetComponent<Rigidbody2D>().velocity = targetvec * speed;
-        ChangeMaterialToBounce();
+        //ChangeMaterialToBounce();
     }
 }
