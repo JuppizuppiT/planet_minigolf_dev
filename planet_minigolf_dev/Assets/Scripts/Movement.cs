@@ -7,6 +7,7 @@ public class Movement : MonoBehaviour
 {
     public GameObject[] planets;
     public GameObject[] suns;
+    public GameObject[] goals;
     GameObject[] celestials;
 
     public float[] lastHit;
@@ -31,11 +32,12 @@ public class Movement : MonoBehaviour
         //score = gameObject.GetComponent(typeof(TMPro.TextMeshProUGUI)) as TMPro.TextMeshProUGUI;
         planets = GameObject.FindGameObjectsWithTag("Planet");
         suns = GameObject.FindGameObjectsWithTag("Sun");
+        goals = GameObject.FindGameObjectsWithTag("Goal");
         // combine planets and suns to one array celestials
-        celestials = new GameObject[planets.Length + suns.Length];
+        celestials = new GameObject[planets.Length + suns.Length + goals.Length];
         planets.CopyTo(celestials, 0);
         suns.CopyTo(celestials, planets.Length);
-        Debug.Log(celestials.Length);
+        goals.CopyTo(celestials, planets.Length + suns.Length);
 
 
         // lastHit = new float[planets.Length];
@@ -99,10 +101,25 @@ public class Movement : MonoBehaviour
                     ResetBallAfterGameOver();
                 }
             }
+            if (celestial.tag == "Goal")
+            {
+                var force = radius * direction.normalized * 2500 * Time.deltaTime/ (distance * distance);
+                GetComponent<Rigidbody2D>().AddForce(force);
+                if (distance < radius + 0.5f){
+                    Debug.Log("You Win");
+                    ResetBallAfterGoal();
+                }
+            }
         }
     }
 
     void ResetBallAfterGameOver()
+    {
+        transform.position = new Vector3(0, 0, 0);
+        GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+    }
+
+    void ResetBallAfterGoal()
     {
         transform.position = new Vector3(0, 0, 0);
         GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
