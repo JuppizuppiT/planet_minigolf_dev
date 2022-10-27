@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public class Movement : MonoBehaviour
 {
     public GameObject[] planets;
+    public GameObject[] suns;
+    GameObject[] celestials;
+
     public float[] lastHit;
 
     public float speed = 15.0f;
@@ -27,11 +30,19 @@ public class Movement : MonoBehaviour
     {
         //score = gameObject.GetComponent(typeof(TMPro.TextMeshProUGUI)) as TMPro.TextMeshProUGUI;
         planets = GameObject.FindGameObjectsWithTag("Planet");
-        lastHit = new float[planets.Length];
-        for (int i = 0; i < planets.Length; i++)
-        {
-            lastHit[i] = 0;
-        }
+        suns = GameObject.FindGameObjectsWithTag("Sun");
+        // combine planets and suns to one array celestials
+        celestials = new GameObject[planets.Length + suns.Length];
+        planets.CopyTo(celestials, 0);
+        suns.CopyTo(celestials, planets.Length);
+        Debug.Log(celestials.Length);
+
+
+        // lastHit = new float[planets.Length];
+        // for (int i = 0; i < planets.Length; i++)
+        // {
+        //     lastHit[i] = 0;
+        // }
         //collider_player = transform.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
     }
     void Update()
@@ -66,20 +77,35 @@ public class Movement : MonoBehaviour
 
     void CalculateGravity()
     {
-        Vector3[] forces = new Vector3[planets.Length];
-        for (int i = 0; i < planets.Length; i++)
+        Vector3[] forces = new Vector3[celestials.Length];
+        for (int i = 0; i < celestials.Length; i++)
         {
-            var planet = planets[i];
-            var direction = planet.transform.position - transform.position;
+            var celestial = celestials[i];
+            var direction = celestial.transform.position - transform.position;
             var distance = direction.magnitude;
-            CircleCollider2D collider_planet = planet.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
+            CircleCollider2D collider_planet = celestial.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
             float radius = collider_planet.bounds.extents[0];
-            if (planet.tag == "Planet")
+            if (celestial.tag == "Planet")
             {
                 var force = radius * direction.normalized * 2500 * Time.deltaTime/ (distance * distance);
                 GetComponent<Rigidbody2D>().AddForce(force);
             }
+            if (celestial.tag == "Sun")
+            {
+                var force = radius * direction.normalized * 2500 * Time.deltaTime/ (distance * distance);
+                GetComponent<Rigidbody2D>().AddForce(force);
+                if (distance < radius + 1){
+                    Debug.Log("Game Over");
+                    ResetBallAfterGameOver();
+                }
+            }
         }
+    }
+
+    void ResetBallAfterGameOver()
+    {
+        transform.position = new Vector3(0, 0, 0);
+        GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
     }
 
     void MoveBall(float click_duration)
