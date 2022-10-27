@@ -32,6 +32,7 @@ public class AimLine : MonoBehaviour
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 targetvec = mousePos - playerPos;
         targetvec.Normalize();
+        playerPos = playerPos + targetvec * 0.6f;
         Vector2 target;
         if (Input.GetMouseButton(0))
         {

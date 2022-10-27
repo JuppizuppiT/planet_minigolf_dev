@@ -15,7 +15,7 @@ public class Movement : MonoBehaviour
     public float click_down_timestamp = 0.0f;
     public float click_up_timestamp = 0.0f;
 
-    public float max_duration = 5f;
+    public float max_duration = 2f;
     
     public int hit_counter = 0;
 
@@ -25,7 +25,7 @@ public class Movement : MonoBehaviour
 
     void Start()
     {
-        score = gameObject.GetComponent(typeof(TMPro.TextMeshProUGUI)) as TMPro.TextMeshProUGUI;
+        //score = gameObject.GetComponent(typeof(TMPro.TextMeshProUGUI)) as TMPro.TextMeshProUGUI;
         planets = GameObject.FindGameObjectsWithTag("Planet");
         lastHit = new float[planets.Length];
         for (int i = 0; i < planets.Length; i++)
