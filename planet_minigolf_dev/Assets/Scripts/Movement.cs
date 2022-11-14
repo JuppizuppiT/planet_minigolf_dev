@@ -87,6 +87,7 @@ public class Movement : MonoBehaviour
             var distance = direction.magnitude;
             CircleCollider2D collider_planet = celestial.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
             float radius = collider_planet.bounds.extents[0];
+
             if (celestial.tag == "Planet")
             {
                 var force = radius * direction.normalized * 2500 * Time.deltaTime/ (distance * distance);
@@ -105,7 +106,7 @@ public class Movement : MonoBehaviour
             {
                 var force = radius * direction.normalized * 2500 * Time.deltaTime/ (distance * distance);
                 GetComponent<Rigidbody2D>().AddForce(force);
-                if (distance < radius + 0.5f){
+                if (distance < radius + 0.6f){
                     Debug.Log("You Win");
                     ResetBallAfterGoal();
                 }

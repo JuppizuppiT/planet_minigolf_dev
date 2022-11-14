@@ -6,7 +6,7 @@ public class Orbit : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject planet;
-    public float speed = 1.0f;
+    float speed = 15.0f;
 
     void Start()
     {

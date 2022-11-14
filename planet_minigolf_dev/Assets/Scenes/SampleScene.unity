@@ -5214,7 +5214,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planet: {fileID: 1443610531}
-  speed: 5
 --- !u!212 &458567396
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5291,7 +5290,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 458567394}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -5310,11 +5309,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -10625,7 +10624,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 934594262}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -10644,11 +10643,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -10666,7 +10665,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planet: {fileID: 1443610531}
-  speed: 5
 --- !u!212 &934594266
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -11013,7 +11011,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 1136995370}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -11032,11 +11030,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -11054,7 +11052,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planet: {fileID: 1443610531}
-  speed: 5
 --- !u!212 &1136995374
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -11349,7 +11346,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 1568282742}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -11368,11 +11365,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -11390,7 +11387,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planet: {fileID: 1443610531}
-  speed: 5
 --- !u!212 &1568282746
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -11487,7 +11483,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 1722874261}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -11506,11 +11502,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -11528,7 +11524,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planet: {fileID: 1443610531}
-  speed: 5
 --- !u!212 &1722874265
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -11625,7 +11620,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 1726718807}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -11644,11 +11639,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -11666,7 +11661,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planet: {fileID: 1443610531}
-  speed: 5
 --- !u!212 &1726718811
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -11864,7 +11858,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 1969494063}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -11883,11 +11877,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca3b8a9b3c4b1134aa3a2f51c0cda583, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -11905,7 +11899,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planet: {fileID: 1443610531}
-  speed: 5
 --- !u!212 &1969494067
 SpriteRenderer:
   m_ObjectHideFlags: 0
