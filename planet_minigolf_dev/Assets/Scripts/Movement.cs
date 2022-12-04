@@ -86,7 +86,6 @@ public class Movement : MonoBehaviour
             }
         }
 
-            //UNSTABLE AND UNTESTED BEHAVIOUR
             if (rb.velocity.magnitude > gravity_threshold)
             {
                 CalculateGravity();
@@ -95,8 +94,6 @@ public class Movement : MonoBehaviour
             {
                 rb.velocity = new Vector2(0, 0);
             }
-            //UNSTABLE AND UNTESTED BEHAVIOUR
-        
     }
 
     void CalculateGravity()
