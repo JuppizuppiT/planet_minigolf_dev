@@ -22,6 +22,6 @@ public class CameraFollow : MonoBehaviour {
         
         height = (height < min_size) ? min_size : height;
         
-        cam.orthographicSize = height * 0.8f;
+        cam.orthographicSize = height * 0.65f;
     }
 }

@@ -46,20 +46,19 @@ public class AimLine : MonoBehaviour
             lineRenderer.startColor = Color.red;
             lineRenderer.endColor = Color.red;
             target = playerPos + targetvec * length;
-        }
-        else if (player_rb.velocity.magnitude > 0.1f)
-        {
-            //lineRenderer.startColor = Color.green;
-            //lineRenderer.endColor = Color.green;
-            target = playerPos + player_rb.velocity * 0f;
         }  
         else
         {
-            // change color of LineRenderer to red
             lineRenderer.startColor = Color.white;
             lineRenderer.endColor = Color.white;
             target = playerPos + targetvec * lineLength;
         }
+        if (player_rb.velocity.magnitude > 0.1f)
+        {
+            target = playerPos + player_rb.velocity * 0f;
+        }
+
+
         Vector2[] positions =
         new Vector2[2]
         {
