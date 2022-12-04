@@ -12,9 +12,8 @@ public class Movement : MonoBehaviour
 
     public float[] lastHit;
 
-    public float speed = 15.0f;
-
-    public float speed_factor = 10.0f;
+    public float gravity_factor = 5000f;
+    private float speed_factor = 1000f;
 
     public float click_down_timestamp = 0.0f;
     public float click_up_timestamp = 0.0f;
@@ -53,7 +52,6 @@ public class Movement : MonoBehaviour
             new Vector3(Input.GetAxis("Horizontal"),
                 Input.GetAxis("Vertical"),
                 0);
-        transform.position += move * speed * Time.deltaTime;
         if (Input.GetMouseButtonDown(0) && charge_cancelled == 0)
         {
             click_down_timestamp = Time.time;
@@ -90,12 +88,12 @@ public class Movement : MonoBehaviour
 
             if (celestial.tag == "Planet")
             {
-                var force = radius * direction.normalized * 2500 * Time.deltaTime/ (distance * distance);
+                var force = radius * direction.normalized * gravity_factor * Time.deltaTime/ (distance * distance);
                 GetComponent<Rigidbody2D>().AddForce(force);
             }
             if (celestial.tag == "Sun")
             {
-                var force = radius * direction.normalized * 2500 * Time.deltaTime/ (distance * distance);
+                var force = radius * direction.normalized * gravity_factor * Time.deltaTime/ (distance * distance);
                 GetComponent<Rigidbody2D>().AddForce(force);
                 if (distance < radius + 1){
                     Debug.Log("Game Over");
@@ -104,7 +102,7 @@ public class Movement : MonoBehaviour
             }
             if (celestial.tag == "Goal")
             {
-                var force = radius * direction.normalized * 2500 * Time.deltaTime/ (distance * distance);
+                var force = radius * direction.normalized * gravity_factor * Time.deltaTime/ (distance * distance);
                 GetComponent<Rigidbody2D>().AddForce(force);
                 if (distance < radius + 0.6f){
                     Debug.Log("You Win");
@@ -128,6 +126,8 @@ public class Movement : MonoBehaviour
 
     void MoveBall(float click_duration)
     {
+        float speed;
+
         if (click_duration < max_duration)
         {
             speed = click_duration * speed_factor;
@@ -137,17 +137,13 @@ public class Movement : MonoBehaviour
             speed = max_duration * speed_factor;
         }
         hit_counter++;
-        // int to string
         score.text = hit_counter.ToString();
+
         this.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 targetvec = mousePos - transform.position;
-        var distance = targetvec.magnitude;
         targetvec.Normalize();
-        var force = targetvec.normalized * 10 / (distance * distance);
-        //forces.Append(force);
+        var force = targetvec.normalized * speed;
         GetComponent<Rigidbody2D>().AddForce(force);
-        this.GetComponent<Rigidbody2D>().velocity = targetvec * speed;
-        //ChangeMaterialToBounce();
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class AimLine : MonoBehaviour
 {
     public Transform player;
+    public Rigidbody2D player_rb;
     public LineRenderer lineRenderer;
     public float lineLength = 2f;
     // Start is called before the first frame update
@@ -46,6 +47,12 @@ public class AimLine : MonoBehaviour
             lineRenderer.endColor = Color.red;
             target = playerPos + targetvec * length;
         }
+        else if (player_rb.velocity.magnitude > 0.1f)
+        {
+            //lineRenderer.startColor = Color.green;
+            //lineRenderer.endColor = Color.green;
+            target = playerPos + player_rb.velocity * 0f;
+        }  
         else
         {
             // change color of LineRenderer to red
