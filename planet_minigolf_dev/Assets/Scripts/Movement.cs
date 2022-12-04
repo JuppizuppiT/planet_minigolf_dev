@@ -14,8 +14,8 @@ public class Movement : MonoBehaviour
 
     public float[] lastHit;
 
-    private float gravity_factor = 100000f;
-    private float speed_factor = 1000f;
+    private float gravity_factor = 9000f;
+    private float speed_factor = 2000f;
 
     public float click_down_timestamp = 0.0f;
     public float click_up_timestamp = 0.0f;
@@ -93,6 +93,7 @@ public class Movement : MonoBehaviour
             var distance = direction.magnitude;
             CircleCollider2D collider_planet = celestial.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
             float radius = collider_planet.bounds.extents[0];
+            Debug.Log(radius, celestial);
 
             if (celestial.tag == "Planet")
             {
