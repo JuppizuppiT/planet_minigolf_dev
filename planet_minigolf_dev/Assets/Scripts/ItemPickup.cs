@@ -6,19 +6,20 @@ public class ItemPickup : MonoBehaviour
 {
     public Rigidbody2D rb;
     public GameObject[] items;
-
     // Start is called before the first frame update
     void Start()
     {
-        items = GameObject.FindGameObjectsWithTag("Item");
     }
 
     // Update is called once per frame
     void Update()
     {
+        items = GameObject.FindGameObjectsWithTag("Item");
+
         for (int i = 0; i < items.Length; i++)
         {
             var item = items[i];
+            Debug.Log("item: " + item);
             var direction = item.transform.position - transform.position;
             var distance = direction.magnitude;
             CircleCollider2D collider_item =
@@ -31,9 +32,19 @@ public class ItemPickup : MonoBehaviour
             }
     }
 
-    void OnTouch()
+    void OnTouch(GameObject item)
     {
-        print("Item touched");
+        var item_type = item.GetComponent<ItemType>();
+        if (item_type.type == "stopper")
+        {
+            rb.velocity = new Vector2(0, 0);
+        }
+        {
+            
+        }
+        Destroy(item);
+        
     }
-}
+
+    }
 }

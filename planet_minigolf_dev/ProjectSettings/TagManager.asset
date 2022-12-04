@@ -7,6 +7,7 @@ TagManager:
   - Planet
   - Sun
   - Goal
+  - Item
   layers:
   - Default
   - TransparentFX

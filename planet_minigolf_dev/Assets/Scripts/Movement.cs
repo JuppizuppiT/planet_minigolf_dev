@@ -100,7 +100,6 @@ public class Movement : MonoBehaviour
     {
         
         float distance_dingsbums = 1.2f;
-        Vector3[] forces = new Vector3[celestials.Length];
         bool touched = false;
         for (int i = 0; i < celestials.Length; i++)
         {
@@ -111,7 +110,6 @@ public class Movement : MonoBehaviour
                 celestial.GetComponent(typeof (CircleCollider2D)) as
                 CircleCollider2D;
             float radius = collider_planet.bounds.extents[0];
-            Debug.Log (radius, celestial);
 
             if (celestial.tag == "Planet")
             {
