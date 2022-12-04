@@ -5416,6 +5416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 936284110}
+  black_hole: {fileID: 0}
 --- !u!1 &716137488
 GameObject:
   m_ObjectHideFlags: 0
@@ -5447,6 +5448,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 936284110}
+  player_rb: {fileID: 936284112}
   lineRenderer: {fileID: 0}
   lineLength: 2
 --- !u!120 &716137490
@@ -10836,8 +10838,7 @@ MonoBehaviour:
   suns: []
   goals: []
   lastHit: []
-  speed: 15
-  speed_factor: 10
+  gravity_factor: 5000
   click_down_timestamp: 0
   click_up_timestamp: 0
   max_duration: 2
