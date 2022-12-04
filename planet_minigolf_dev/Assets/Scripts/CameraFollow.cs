@@ -18,7 +18,7 @@ public class CameraFollow : MonoBehaviour {
         Vector3 player_to_goal_vector = black_hole.transform.position - player.transform.position;
         Vector3 new_camera_pos_xy = player.transform.position + player_to_goal_vector * 0.5f;
         float height = (player_to_goal_vector.magnitude / 2) / Mathf.Tan(30 * (Mathf.PI / 180));
-        Debug.Log(new_camera_pos_xy);
+        Debug.Log(height);
         transform.position = new_camera_pos_xy + new Vector3(0, 0, -5);
         
         height = (height < min_size) ? min_size : height;

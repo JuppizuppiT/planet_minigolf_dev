@@ -10837,6 +10837,7 @@ MonoBehaviour:
   planets: []
   suns: []
   goals: []
+  rb: {fileID: 936284112}
   lastHit: []
   gravity_factor: 5000
   click_down_timestamp: 0

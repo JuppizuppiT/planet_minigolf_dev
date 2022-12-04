@@ -10,9 +10,11 @@ public class Movement : MonoBehaviour
     public GameObject[] goals;
     GameObject[] celestials;
 
+    public Rigidbody2D rb;
+
     public float[] lastHit;
 
-    public float gravity_factor = 5000f;
+    private float gravity_factor = 100000f;
     private float speed_factor = 1000f;
 
     public float click_down_timestamp = 0.0f;
@@ -71,8 +73,14 @@ public class Movement : MonoBehaviour
         {
             charge_cancelled = 0;
         }
-        
-        CalculateGravity();
+        //UNSTABLE AND UNTESTED BEHAVIOUR
+        if(rb.velocity.magnitude > 0.1f)
+        {
+            CalculateGravity();
+        }else{
+            rb.velocity = new Vector2(0,0);
+        }
+        //UNSTABLE AND UNTESTED BEHAVIOUR
     }
 
     void CalculateGravity()
@@ -102,7 +110,7 @@ public class Movement : MonoBehaviour
             }
             if (celestial.tag == "Goal")
             {
-                var force = radius * direction.normalized * gravity_factor * Time.deltaTime/ (distance * distance);
+                var force = radius * direction.normalized * gravity_factor * 5 * Time.deltaTime/ (distance * distance);
                 GetComponent<Rigidbody2D>().AddForce(force);
                 if (distance < radius + 0.6f){
                     Debug.Log("You Win");
