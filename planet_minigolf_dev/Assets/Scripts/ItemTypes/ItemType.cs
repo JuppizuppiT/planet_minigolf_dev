@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class ItemType : MonoBehaviour
 {
+    // for item types see ItemPickup.cs
     public string type;
 }

@@ -19,7 +19,6 @@ public class ItemPickup : MonoBehaviour
         for (int i = 0; i < items.Length; i++)
         {
             var item = items[i];
-            Debug.Log("item: " + item);
             var direction = item.transform.position - transform.position;
             var distance = direction.magnitude;
             CircleCollider2D collider_item =
@@ -35,13 +34,28 @@ public class ItemPickup : MonoBehaviour
     void OnTouch(GameObject item)
     {
         var item_type = item.GetComponent<ItemType>();
-        if (item_type.type == "stopper")
+
+        // speed
+        if (item_type.type == "speed")
+        {
+            rb.velocity = rb.velocity * 1.5f;
+        }
+        // slow down
+        else if (item_type.type == "slow")
+        {
+            rb.velocity = rb.velocity * 0.5f;
+        }
+        // reverse
+        else if (item_type.type == "reverse")
+        {
+            rb.velocity = rb.velocity * -1f;
+        }
+        // stopper
+        else if (item_type.type == "stopper")
         {
             rb.velocity = new Vector2(0, 0);
         }
-        {
-            
-        }
+
         Destroy(item);
         
     }
