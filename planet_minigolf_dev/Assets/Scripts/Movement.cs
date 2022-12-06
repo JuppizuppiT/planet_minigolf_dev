@@ -33,6 +33,12 @@ public class Movement : MonoBehaviour
 
     public TMPro.TextMeshProUGUI score;
 
+    private SceneLoader sceneLoader;
+
+    public GameObject ScriptSlave;
+
+    public int LevelNum;
+
     void Start()
     {
         //score = gameObject.GetComponent(typeof(TMPro.TextMeshProUGUI)) as TMPro.TextMeshProUGUI;
@@ -173,10 +179,26 @@ public class Movement : MonoBehaviour
         GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
     }
 
+    private int levelNum = 0; 
+
     void ResetBallAfterGoal()
     {
-        transform.position = new Vector3(0, 0, 0);
-        GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+        sceneLoader = ScriptSlave.GetComponent<SceneLoader>();
+
+        if (levelNum == 0)
+        {
+            sceneLoader.LoadScene("Level2");
+            levelNum = 1;
+        }
+        else
+        {
+            sceneLoader.LoadScene("LevelGoal");
+        }
+
+        //string nextLevel = "Level" + LevelNum + 1;
+        
+        // transform.position = new Vector3(0, 0, 0);
+        // GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
     }
 
     void MoveBall(float click_duration)
