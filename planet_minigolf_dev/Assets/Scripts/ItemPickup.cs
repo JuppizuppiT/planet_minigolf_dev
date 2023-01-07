@@ -6,6 +6,7 @@ public class ItemPickup : MonoBehaviour
 {
     public Rigidbody2D rb;
     public GameObject[] items;
+    public Movement movement;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,6 +55,11 @@ public class ItemPickup : MonoBehaviour
         else if (item_type.type == "stopper")
         {
             rb.velocity = new Vector2(0, 0);
+        }
+        // vaccine
+        else if (item_type.type == "vaccine")
+        {
+            movement.addVaccine();
         }
 
         Destroy(item);

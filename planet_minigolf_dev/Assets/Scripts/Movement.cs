@@ -39,6 +39,8 @@ public class Movement : MonoBehaviour
 
     public int LevelNum;
 
+    private uint vaccineCount = 0;
+
     void Start()
     {
         //score = gameObject.GetComponent(typeof(TMPro.TextMeshProUGUI)) as TMPro.TextMeshProUGUI;
@@ -222,5 +224,16 @@ public class Movement : MonoBehaviour
         targetvec.Normalize();
         var force = targetvec.normalized * speed;
         GetComponent<Rigidbody2D>().AddForce(force);
+    }
+
+    public void addVaccine()
+    {
+        vaccineCount++;
+        Debug.Log(vaccineCount);
+    }
+
+    public void removeVaccine()
+    {
+        vaccineCount--;
     }
 }
