@@ -7,7 +7,7 @@ public class PlanetScript : MonoBehaviour
 {
     public uint infectionStatus;
     private SpriteRenderer spriteRenderer;
-    private uint maxInfectionStatus = 10;
+    public uint maxInfectionStatus = 10;
 
     void Start()
     {

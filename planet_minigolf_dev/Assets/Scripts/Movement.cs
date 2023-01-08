@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
@@ -136,7 +137,7 @@ public class Movement : MonoBehaviour
     void CalculateGravity()
     {
         
-        float distance_dingsbums = 1.2f;
+        float distance_dingsbums = 1.3f;
         GameObject touchedPlanet = null;
         for (int i = 0; i < celestials.Length; i++)
         {
@@ -174,6 +175,7 @@ public class Movement : MonoBehaviour
                 if (distance < radius + 1)
                 {
                     GameOver("You flew to close to the sun");
+                    break;
                 }
             }
             if (celestial.tag == "Goal")
@@ -182,18 +184,27 @@ public class Movement : MonoBehaviour
                     radius *
                     direction.normalized *
                     gravity_factor *
-                    5 *
+                    10 *
                     Time.deltaTime /
                     Mathf.Pow(distance, distance_dingsbums);
                 GetComponent<Rigidbody2D>().AddForce(force);
                 if (distance < radius + 0.6f)
                 {
-                    Debug.Log("You Win");
-                    ResetBallAfterGoal();
+                    if (CheckIfPlanetsCleared())
+                    {
+                        Debug.Log("You Win");
+                        ResetBallAfterGoal();
+                        break;
+                    }
+                    else
+                    {
+                        GameOver("You didn't clear all planets from their Planetary Pneumonia :(");
+                        break;
+                    }
                 }
             }
         }
-        if (touchedPlanet)
+        if (touchedPlanet != null)
         {
             rb.drag = 0.3f;
         }
@@ -207,7 +218,8 @@ public class Movement : MonoBehaviour
     {
         Debug.Log("Game Over" + gameOverReason);
         transform.position = new Vector3(0, 0, 0);
-        GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+        GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
         moveCount = defaultMoveCount;
     }
 
@@ -215,15 +227,21 @@ public class Movement : MonoBehaviour
 
     void ResetBallAfterGoal()
     {
+        GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
         sceneLoader = ScriptSlave.GetComponent<SceneLoader>();
-        if (levelNum == 0)
+        Scene scene = SceneManager.GetActiveScene();
+        switch (scene.name)
         {
-            sceneLoader.LoadScene("Level2");
-            levelNum = 1;
-        }
-        else
-        {
-            sceneLoader.LoadScene("LevelGoal");
+            case "Tutorial_01":
+                sceneLoader.LoadScene("Tutorial_02");
+                break;
+            case "Tutorial_02":
+                sceneLoader.LoadScene("Tutorial_03");
+                break;
+            default:
+                sceneLoader.LoadScene("LevelGoal");
+                break;
         }
     }
 
@@ -258,5 +276,20 @@ public class Movement : MonoBehaviour
     public void removeMove()
     {
         moveCount--;
+    }
+
+    private bool CheckIfPlanetsCleared()
+    {
+        uint sum = 0;
+        for (int i = 0; i < planets.Length; i++)
+        {
+            PlanetScript planetScript = planets[i].GetComponent(typeof(PlanetScript)) as PlanetScript;
+            sum += planetScript.infectionStatus;
+            if (sum > 0)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }
