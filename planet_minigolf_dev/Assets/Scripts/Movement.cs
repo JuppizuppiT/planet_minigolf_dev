@@ -35,6 +35,7 @@ public class Movement : MonoBehaviour
     public TMPro.TextMeshProUGUI score;
 
     private SceneLoader sceneLoader;
+    private GameStateManager gameStateManager;
 
     public GameObject ScriptSlave;
 
@@ -57,6 +58,8 @@ public class Movement : MonoBehaviour
         goals.CopyTo(celestials, planets.Length + suns.Length);
 
         moveCount = defaultMoveCount;
+
+        gameStateManager = ScriptSlave.GetComponent<GameStateManager>();
     }
 
     void Update()
@@ -216,13 +219,13 @@ public class Movement : MonoBehaviour
 
     void GameOver(string gameOverReason)
     {
-        Debug.Log("Game Over" + gameOverReason);
+        gameStateManager.GameOver(gameOverReason);
+        /*Debug.Log("Game Over" + gameOverReason);
         transform.position = new Vector3(0, 0, 0);
         GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
-        moveCount = defaultMoveCount;
+        moveCount = defaultMoveCount;*/
     }
-
     
 
     void ResetBallAfterGoal()
