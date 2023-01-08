@@ -59,7 +59,7 @@ public class ItemPickup : MonoBehaviour
         // vaccine
         else if (item_type.type == "vaccine")
         {
-            movement.addVaccine();
+            movement.addMove();
         }
 
         Destroy(item);

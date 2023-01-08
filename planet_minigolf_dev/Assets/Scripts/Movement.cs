@@ -37,78 +37,107 @@ public class Movement : MonoBehaviour
 
     public GameObject ScriptSlave;
 
-    public int LevelNum;
+    public uint defaultMoveCount = 5;
 
-    private uint vaccineCount = 0;
+    private uint moveCount;
+
+    private int levelNum = 0;
 
     void Start()
     {
-        //score = gameObject.GetComponent(typeof(TMPro.TextMeshProUGUI)) as TMPro.TextMeshProUGUI;
         planets = GameObject.FindGameObjectsWithTag("Planet");
         suns = GameObject.FindGameObjectsWithTag("Sun");
         goals = GameObject.FindGameObjectsWithTag("Goal");
 
         // combine planets and suns to one array celestials
-        celestials =
-            new GameObject[planets.Length + suns.Length + goals.Length];
+        celestials = new GameObject[planets.Length + suns.Length + goals.Length];
         planets.CopyTo(celestials, 0);
         suns.CopyTo(celestials, planets.Length);
         goals.CopyTo(celestials, planets.Length + suns.Length);
 
-        // lastHit = new float[planets.Length];
-        // for (int i = 0; i < planets.Length; i++)
-        // {
-        //     lastHit[i] = 0;
-        // }
-        //collider_player = transform.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
+        moveCount = defaultMoveCount;
     }
 
     void Update()
     {
+        score.text = moveCount.ToString();
         float gravity_threshold = 0.1f;
-        // var move =
-        //     new Vector3(Input.GetAxis("Horizontal"),
-        //         Input.GetAxis("Vertical"),
-        //         0);
         if (rb.velocity.magnitude < gravity_threshold)
         {
-            if (Input.GetMouseButtonDown(0) && charge_cancelled == 0)
+            if (moveCount == 0)
             {
-                click_down_timestamp = Time.time;
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                charge_cancelled = 1;
-            }
-            if (Input.GetMouseButtonUp(0) && charge_cancelled == 0)
-            {
-                click_up_timestamp = Time.time;
-                float click_duration =
-                    click_up_timestamp - click_down_timestamp;
-
-                MoveBall (click_duration);
-            }
-            if (Input.GetMouseButtonUp(1))
-            {
-                charge_cancelled = 0;
-            }
-        }
-
-            if (rb.velocity.magnitude > gravity_threshold)
-            {
-                CalculateGravity();
+                GameOver("You have no more moves left");
             }
             else
             {
-                rb.velocity = new Vector2(0, 0);
+                StandingStillHandler();
             }
+        }
+        else
+        {
+            CalculateGravity();
+        }
+    }
+
+    void StandingStillHandler()
+    {
+        rb.velocity = new Vector2(0, 0);
+        if (Input.GetMouseButtonDown(0) && charge_cancelled == 0)
+        {
+            click_down_timestamp = Time.time;
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            charge_cancelled = 1;
+        }
+        if (Input.GetMouseButtonUp(0) && charge_cancelled == 0)
+        {
+            click_up_timestamp = Time.time;
+            float click_duration = click_up_timestamp - click_down_timestamp;
+            MoveBall(click_duration);
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            charge_cancelled = 0;
+        }
+        if (Input.GetKeyUp("space"))
+        {
+            GameObject touchedPlanet = null;
+            for (int i = 0; i < celestials.Length; i++)
+            {
+                var celestial = celestials[i];
+                var direction = celestial.transform.position - transform.position;
+                var distance = direction.magnitude;
+                CircleCollider2D collider_planet = celestial.GetComponent(typeof(CircleCollider2D)) as CircleCollider2D;
+                float radius = collider_planet.bounds.extents[0];
+
+                if (celestial.tag == "Planet")
+                {
+                    if (distance < radius + 1f)
+                    {
+                        touchedPlanet = celestial;
+                        break;
+                    }
+                }
+            }
+            if (touchedPlanet)
+            {
+                PlanetScript planetScript = touchedPlanet.GetComponent(typeof(PlanetScript)) as PlanetScript;
+                if (planetScript.infectionStatus > 0)
+                {
+                    removeMove();
+                    planetScript.infectionStatus--;
+                    print(planetScript.infectionStatus);
+                }
+            }
+        }
     }
 
     void CalculateGravity()
     {
         
         float distance_dingsbums = 1.2f;
-        bool touched = false;
+        GameObject touchedPlanet = null;
         for (int i = 0; i < celestials.Length; i++)
         {
             var celestial = celestials[i];
@@ -130,7 +159,7 @@ public class Movement : MonoBehaviour
                 GetComponent<Rigidbody2D>().AddForce(force);
                 if (distance < radius + 1f)
                 {
-                    touched = true;
+                    touchedPlanet = celestial;
                 }
             }
             if (celestial.tag == "Sun")
@@ -144,8 +173,7 @@ public class Movement : MonoBehaviour
                 GetComponent<Rigidbody2D>().AddForce(force);
                 if (distance < radius + 1)
                 {
-                    Debug.Log("Game Over");
-                    ResetBallAfterGameOver();
+                    GameOver("You flew to close to the sun");
                 }
             }
             if (celestial.tag == "Goal")
@@ -165,7 +193,7 @@ public class Movement : MonoBehaviour
                 }
             }
         }
-        if (touched == false)
+        if (touchedPlanet)
         {
             rb.drag = 0.3f;
         }
@@ -175,18 +203,19 @@ public class Movement : MonoBehaviour
         }
     }
 
-    void ResetBallAfterGameOver()
+    void GameOver(string gameOverReason)
     {
+        Debug.Log("Game Over" + gameOverReason);
         transform.position = new Vector3(0, 0, 0);
         GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+        moveCount = defaultMoveCount;
     }
 
-    private int levelNum = 0; 
+    
 
     void ResetBallAfterGoal()
     {
         sceneLoader = ScriptSlave.GetComponent<SceneLoader>();
-
         if (levelNum == 0)
         {
             sceneLoader.LoadScene("Level2");
@@ -196,11 +225,6 @@ public class Movement : MonoBehaviour
         {
             sceneLoader.LoadScene("LevelGoal");
         }
-
-        //string nextLevel = "Level" + LevelNum + 1;
-        
-        // transform.position = new Vector3(0, 0, 0);
-        // GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
     }
 
     void MoveBall(float click_duration)
@@ -215,8 +239,8 @@ public class Movement : MonoBehaviour
         {
             speed = max_duration * speed_factor;
         }
-        hit_counter++;
-        score.text = hit_counter.ToString();
+        moveCount--;
+        
 
         this.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -226,14 +250,13 @@ public class Movement : MonoBehaviour
         GetComponent<Rigidbody2D>().AddForce(force);
     }
 
-    public void addVaccine()
+    public void addMove()
     {
-        vaccineCount++;
-        Debug.Log(vaccineCount);
+        moveCount++;
     }
 
-    public void removeVaccine()
+    public void removeMove()
     {
-        vaccineCount--;
+        moveCount--;
     }
 }
