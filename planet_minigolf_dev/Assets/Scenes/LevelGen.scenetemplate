@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13966, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Template
+  m_Name: LevelGen
   m_EditorClassIdentifier: 
-  templateScene: {fileID: 102900000, guid: 2cda990e2423bbf4892e6590ba056729, type: 3}
+  templateScene: {fileID: 102900000, guid: 28498254aab80fe4fac987c50b17a651, type: 3}
   templateName: 
   description: 
   preview: {fileID: 0}
