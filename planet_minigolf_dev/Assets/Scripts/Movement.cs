@@ -2,13 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
     public GameObject[] planets;
-
     public GameObject[] suns;
-
     public GameObject[] goals;
 
     GameObject[] celestials;
@@ -18,11 +17,9 @@ public class Movement : MonoBehaviour
     public float[] lastHit;
 
     private float gravity_factor = 9000f;
-
     private float speed_factor = 2000f;
 
     public float click_down_timestamp = 0.0f;
-
     public float click_up_timestamp = 0.0f;
 
     public float max_duration = 2f;
@@ -34,6 +31,7 @@ public class Movement : MonoBehaviour
     public TMPro.TextMeshProUGUI score;
 
     private SceneLoader sceneLoader;
+    private GameStateManager gameStateManager;
 
     public GameObject ScriptSlave;
 
@@ -56,6 +54,8 @@ public class Movement : MonoBehaviour
         goals.CopyTo(celestials, planets.Length + suns.Length);
 
         moveCount = defaultMoveCount;
+
+        gameStateManager = ScriptSlave.GetComponent<GameStateManager>();
     }
 
     void Update()
@@ -125,7 +125,7 @@ public class Movement : MonoBehaviour
                 PlanetScript planetScript = touchedPlanet.GetComponent(typeof(PlanetScript)) as PlanetScript;
                 if (planetScript.infectionStatus > 0)
                 {
-                    removeMove();
+                    RemoveMove();
                     planetScript.infectionStatus--;
                     print(planetScript.infectionStatus);
                 }
@@ -135,17 +135,13 @@ public class Movement : MonoBehaviour
 
     void CalculateGravity()
     {
-        
-        float distance_dingsbums = 1.2f;
+        float distance_dingsbums = 1.3f;
         GameObject touchedPlanet = null;
-        for (int i = 0; i < celestials.Length; i++)
+        foreach (GameObject celestial in celestials)
         {
-            var celestial = celestials[i];
-            var direction = celestial.transform.position - transform.position;
-            var distance = direction.magnitude;
-            CircleCollider2D collider_planet =
-                celestial.GetComponent(typeof (CircleCollider2D)) as
-                CircleCollider2D;
+            Vector2 direction = celestial.transform.position - transform.position;
+            float distance = direction.magnitude;
+            CircleCollider2D collider_planet = celestial.GetComponent<CircleCollider2D>();
             float radius = collider_planet.bounds.extents[0];
 
             if (celestial.tag == "Planet")
@@ -174,6 +170,7 @@ public class Movement : MonoBehaviour
                 if (distance < radius + 1)
                 {
                     GameOver("You flew to close to the sun");
+                    break;
                 }
             }
             if (celestial.tag == "Goal")
@@ -182,18 +179,27 @@ public class Movement : MonoBehaviour
                     radius *
                     direction.normalized *
                     gravity_factor *
-                    5 *
+                    10 *
                     Time.deltaTime /
                     Mathf.Pow(distance, distance_dingsbums);
                 GetComponent<Rigidbody2D>().AddForce(force);
                 if (distance < radius + 0.6f)
                 {
-                    Debug.Log("You Win");
-                    ResetBallAfterGoal();
+                    if (CheckIfPlanetsCleared())
+                    {
+                        Debug.Log("You Win");
+                        ResetBallAfterGoal();
+                        break;
+                    }
+                    else
+                    {
+                        GameOver("You didn't clear all planets from their Planetary Pneumonia :(");
+                        break;
+                    }
                 }
             }
         }
-        if (touchedPlanet)
+        if (touchedPlanet != null)
         {
             rb.drag = 0.3f;
         }
@@ -205,25 +211,32 @@ public class Movement : MonoBehaviour
 
     void GameOver(string gameOverReason)
     {
-        Debug.Log("Game Over" + gameOverReason);
+        gameStateManager.GameOver(gameOverReason);
+        /*Debug.Log("Game Over" + gameOverReason);
         transform.position = new Vector3(0, 0, 0);
-        GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
-        moveCount = defaultMoveCount;
+        GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
+        moveCount = defaultMoveCount;*/
     }
 
-    
 
     void ResetBallAfterGoal()
     {
+        GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
         sceneLoader = ScriptSlave.GetComponent<SceneLoader>();
-        if (levelNum == 0)
+        Scene scene = SceneManager.GetActiveScene();
+        switch (scene.name)
         {
-            sceneLoader.LoadScene("Level2");
-            levelNum = 1;
-        }
-        else
-        {
-            sceneLoader.LoadScene("LevelGoal");
+            case "Tutorial_01":
+                sceneLoader.LoadScene("Tutorial_02");
+                break;
+            case "Tutorial_02":
+                sceneLoader.LoadScene("Tutorial_03");
+                break;
+            default:
+                sceneLoader.LoadScene("LevelGoal");
+                break;
         }
     }
 
@@ -240,23 +253,35 @@ public class Movement : MonoBehaviour
             speed = max_duration * speed_factor;
         }
         moveCount--;
-        
 
-        this.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 targetvec = mousePos - transform.position;
         targetvec.Normalize();
-        var force = targetvec.normalized * speed;
+        Vector2 force = targetvec.normalized * speed;
         GetComponent<Rigidbody2D>().AddForce(force);
     }
 
-    public void addMove()
+    public void AddMove()
     {
         moveCount++;
     }
 
-    public void removeMove()
+    public void RemoveMove()
     {
         moveCount--;
+    }
+
+    private bool CheckIfPlanetsCleared()
+    {
+        foreach (GameObject planet in planets)
+        {
+            if (planet.GetComponent<PlanetScript>().infectionStatus > 0)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }
