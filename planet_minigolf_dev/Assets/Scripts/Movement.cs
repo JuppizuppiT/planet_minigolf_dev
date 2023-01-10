@@ -68,7 +68,7 @@ public class Movement : MonoBehaviour
             {
                 GameOver("You have no more moves left");
             }
-            else
+            else if (gameStateManager.State == GameStateManager.GameState.Running)
             {
                 StandingStillHandler();
             }
