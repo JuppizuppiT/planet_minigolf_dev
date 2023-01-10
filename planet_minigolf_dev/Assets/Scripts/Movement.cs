@@ -234,6 +234,9 @@ public class Movement : MonoBehaviour
             case "Tutorial_02":
                 sceneLoader.LoadScene("Tutorial_03");
                 break;
+            case "Tutorial_03":
+                sceneLoader.LoadScene("Level2");
+                break;
             default:
                 sceneLoader.LoadScene("LevelGoal");
                 break;

@@ -176,9 +176,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.007797122, y: 0}
+  m_Offset: {x: 0.007797003, y: 0}
   serializedVersion: 2
-  m_Radius: 1.5525838
+  m_Radius: 0.82494426
 --- !u!212 &247500512
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -220,7 +220,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 46bdf46d29e9548428e425de8e5f0f4e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 431a1c681649f914b8110462b7477811, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -239,8 +239,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 247500509}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 38.27, y: 2.78, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalPosition: {x: 38.27, y: 5.15, z: 0}
+  m_LocalScale: {x: 8, y: 8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -7069,8 +7069,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 65f387dbd7c1f3948ad6c3dc3841debd, type: 3}
+  m_Color: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -7089,7 +7089,7 @@ Transform:
   m_GameObject: {fileID: 1732598688}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 72.04, y: -6.97, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -7108,9 +7108,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.032262802, y: 0}
   serializedVersion: 2
-  m_Radius: 0.53619766
+  m_Radius: 1.7298717
 --- !u!1 &1780073383
 GameObject:
   m_ObjectHideFlags: 0
@@ -7209,7 +7209,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 41.4, y: 8.956}
+  m_AnchoredPosition: {x: 41.4, y: 11.82}
   m_SizeDelta: {x: 16.6016, y: 5.1212}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2076474510
