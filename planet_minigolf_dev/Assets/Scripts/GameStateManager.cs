@@ -34,7 +34,7 @@ public class GameStateManager : MonoBehaviour
     }
 
     public void GameOver(string gameOverReason)
-    {
+    {  
         GameOverPanel.SetActive(true);
         GameOverReason.GetComponent<TextMeshProUGUI>().text = gameOverReason;
         State = GameState.GameOver;

@@ -211,10 +211,15 @@ public class Movement : MonoBehaviour
 
     void GameOver(string gameOverReason)
     {
+        
         gameStateManager.GameOver(gameOverReason);
+        GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        FindObjectOfType<AudioManager>().Play("PlayerDeath");
+        //set visibility of object to none
+        GetComponent<SpriteRenderer>().enabled = false;
         /*Debug.Log("Game Over" + gameOverReason);
         transform.position = new Vector3(0, 0, 0);
-        GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        
         GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
         moveCount = defaultMoveCount;*/
     }
@@ -246,6 +251,8 @@ public class Movement : MonoBehaviour
     void MoveBall(float click_duration)
     {
         float speed;
+
+        FindObjectOfType<AudioManager>().Play("PlayerShoot");
 
         if (click_duration < max_duration)
         {

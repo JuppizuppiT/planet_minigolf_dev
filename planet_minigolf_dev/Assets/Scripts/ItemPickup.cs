@@ -61,7 +61,7 @@ public class ItemPickup : MonoBehaviour
         {
             movement.AddMove();
         }
-
+        FindObjectOfType<AudioManager>().Play("ItemPick");
         Destroy(item);
         
     }
