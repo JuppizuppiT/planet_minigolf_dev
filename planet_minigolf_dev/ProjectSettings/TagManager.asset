@@ -8,6 +8,7 @@ TagManager:
   - Sun
   - Goal
   - Item
+  - DeadlyFog
   layers:
   - Default
   - TransparentFX
