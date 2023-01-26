@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ public class GameController : MonoBehaviour
     private float TimeDeltaRemainder;
     private float? ClickDownTimestamp;
     private float AimCharge;
+    private SceneLoader sceneLoader;
 
     void Start()
     {
@@ -150,7 +152,33 @@ public class GameController : MonoBehaviour
         }
         else if (Game.State == GameLogic.GameState.GameOverWin)
         {
+            ResetBallAfterGoal();
             Debug.Log("Game Over Win!");
+        }
+    }
+
+
+    void ResetBallAfterGoal()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        switch (scene.name)
+        {
+            case "Tutorial_01":
+                FindObjectOfType<AudioManager>().Play("BlackTravel");
+                SceneManager.LoadScene("Tutorial_02");
+                break;
+            case "Tutorial_02":
+                FindObjectOfType<AudioManager>().Play("BlackTravel");
+                SceneManager.LoadScene("Tutorial_03");
+                break;
+            case "Tutorial_03":
+                FindObjectOfType<AudioManager>().Play("BlackTravel");
+                SceneManager.LoadScene("Level2");
+                break;
+            default:
+                FindObjectOfType<AudioManager>().Play("BlackTravel");
+                SceneManager.LoadScene("LevelGoal");
+                break;
         }
     }
 
