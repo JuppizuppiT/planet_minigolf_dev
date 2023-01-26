@@ -136,7 +136,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
       propertyPath: sounds.Array.size
-      value: 4
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
+      propertyPath: sounds.Array.data[1].loop
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
       propertyPath: sounds.Array.data[2].clip
@@ -155,6 +159,18 @@ PrefabInstance:
       value: ItemPick
       objectReference: {fileID: 0}
     - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
+      propertyPath: sounds.Array.data[4].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 592468c7dab7aeb4e9f55c67247fd229, type: 3}
+    - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
+      propertyPath: sounds.Array.data[4].name
+      value: BlackTravel
+      objectReference: {fileID: 0}
+    - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
+      propertyPath: sounds.Array.data[0].pitch
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
       propertyPath: sounds.Array.data[2].pitch
       value: 1
       objectReference: {fileID: 0}
@@ -163,11 +179,19 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
+      propertyPath: sounds.Array.data[4].pitch
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
       propertyPath: sounds.Array.data[2].volume
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
       propertyPath: sounds.Array.data[3].volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6646542788402665770, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
+      propertyPath: sounds.Array.data[4].volume
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6646542788402665771, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}

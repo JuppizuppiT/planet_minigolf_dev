@@ -234,15 +234,19 @@ public class Movement : MonoBehaviour
         switch (scene.name)
         {
             case "Tutorial_01":
+                FindObjectOfType<AudioManager>().Play("BlackTravel");
                 sceneLoader.LoadScene("Tutorial_02");
                 break;
             case "Tutorial_02":
+                FindObjectOfType<AudioManager>().Play("BlackTravel");
                 sceneLoader.LoadScene("Tutorial_03");
                 break;
             case "Tutorial_03":
+                FindObjectOfType<AudioManager>().Play("BlackTravel");
                 sceneLoader.LoadScene("Level2");
                 break;
             default:
+                FindObjectOfType<AudioManager>().Play("BlackTravel");
                 sceneLoader.LoadScene("LevelGoal");
                 break;
         }
