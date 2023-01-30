@@ -6,22 +6,29 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    public GameObject AimDotsParent;
     public GameObject PausePanel;
     public GameObject GameOverPanel;
     public GameObject GameOverReason;
     private GameObject[] Celestials;
     private GameObject Ball;
+    private GameObject[] AimDots;
     private GameObject AimLine;
     private GameLogic Game;
     private bool Paused;
     private float TimeDeltaRemainder;
     private float? ClickDownTimestamp;
     private float AimCharge;
-    private SceneLoader sceneLoader;
 
     void Start()
     {
+        AimDots = new GameObject[AimDotsParent.transform.childCount];
+        for (int i = 0; i < AimDotsParent.transform.childCount; i++)
+        {
+            AimDots[i] = AimDotsParent.transform.GetChild(i).gameObject;
+        }
         AimLine = GameObject.Find("AimLine");
+
         Ball = GameObject.Find("Ball");
 
         GameObject[] goals = GameObject.FindGameObjectsWithTag("Goal");
@@ -29,7 +36,7 @@ public class GameController : MonoBehaviour
         GameObject[] planets = GameObject.FindGameObjectsWithTag("Planet");
         GameObject[] deadlyFog = GameObject.FindGameObjectsWithTag("DeadlyFog");
 
-        // combine planets and suns to one array celestials
+        // Combine planets and suns to one array celestials
         Celestials = new GameObject[goals.Length + suns.Length + planets.Length + deadlyFog.Length];
         goals.CopyTo(Celestials, 0);
         suns.CopyTo(Celestials, goals.Length);
@@ -72,7 +79,7 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        if (Game.State != GameLogic.GameState.Ongoing)
+        if (Game.State.Result != null)
         {
             return;
         }
@@ -103,7 +110,7 @@ public class GameController : MonoBehaviour
 
         Vector2 shotVelocity = Vector2.zero;
 
-        if (Input.GetMouseButtonDown(0) && Game.Stopped)
+        if (Input.GetMouseButtonDown(0) && Game.State.Stopped)
         {
             ClickDownTimestamp = Time.time;
         }
@@ -131,7 +138,7 @@ public class GameController : MonoBehaviour
                 float speed = 1000 * AimCharge;
 
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector2 targetVec = (mousePos - Game.BallPosition).normalized;
+                Vector2 targetVec = (mousePos - Game.State.BallPosition).normalized;
                 shotVelocity = targetVec * speed;
             }
             ClickDownTimestamp = null;
@@ -139,24 +146,23 @@ public class GameController : MonoBehaviour
         }
 
         Game.TickAdvance(shotVelocity, false, ticksDelta);
-        Ball.transform.position = Game.BallPosition;
-        Ball.transform.rotation = Quaternion.Euler(0, 0, Game.BallRotation * 180 / Mathf.PI);
+        Ball.transform.position = Game.State.BallPosition;
+        Ball.transform.rotation = Quaternion.Euler(0, 0, Game.State.BallRotation * 180 / Mathf.PI);
 
-        UpdateAimLine();
+        UpdateAimDots();
 
-        if (Game.State == GameLogic.GameState.GameOverFail)
+        if (Game.State.Result == GameLogic.GameResult.GameOverFail)
         {
             Debug.Log("Game Over Fail!");
             GameOverPanel.SetActive(true);
             GameOverReason.GetComponent<TextMeshProUGUI>().text = "You died!";
         }
-        else if (Game.State == GameLogic.GameState.GameOverWin)
+        else if (Game.State.Result == GameLogic.GameResult.GameOverWin)
         {
             ResetBallAfterGoal();
             Debug.Log("Game Over Win!");
         }
     }
-
 
     void ResetBallAfterGoal()
     {
@@ -182,52 +188,32 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void UpdateAimLine()
+    void UpdateAimDots()
     {
-        LineRenderer lineRenderer = AimLine.GetComponent<LineRenderer>();
-        float lineLength = 20;
-
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 targetVec = (mousePos - Game.BallPosition).normalized;
-
-        Vector2 aimLineOrigin = Game.BallPosition + targetVec * 6;
-        Vector2 aimLinePeak;
-        if (Game.Stopped)
+        if (AimCharge > 0)
         {
-            if (AimCharge > 0)
-            {
-                float length = lineLength * AimCharge;
+            GameLogic.GameState stateBackup = Game.State;
+            AimDotsParent.SetActive(true);
 
-                lineRenderer.startColor = Color.red;
-                lineRenderer.endColor = Color.red;
-                aimLinePeak = aimLineOrigin + targetVec * length;
-            }
-            else
+            float speed = 1000 * AimCharge;
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 targetVec = (mousePos - Game.State.BallPosition).normalized;
+            Vector2 shotVelocity = targetVec * speed;
+
+            Game.TickAdvance(shotVelocity, false);
+
+            uint ticksPerDot = 1 * (uint)GameLogic.TickHz / (uint)AimDots.Length;
+            foreach (GameObject aimDot in AimDots)
             {
-                lineRenderer.startColor = Color.white;
-                lineRenderer.endColor = Color.white;
-                aimLinePeak = aimLineOrigin + targetVec * lineLength;
+                Game.TickAdvance(Vector2.zero, false, ticksPerDot);
+                aimDot.transform.position = Game.State.BallPosition;
             }
+
+            Game.State = stateBackup;
         }
         else
         {
-            aimLinePeak = aimLineOrigin;
+            AimDotsParent.SetActive(false);
         }
-
-
-        DrawAimLine(new Vector2[] { aimLineOrigin, aimLinePeak });
-    }
-
-    void DrawAimLine(Vector2[] vertexPositions)
-    {
-        LineRenderer lineRenderer = AimLine.GetComponent<LineRenderer>();
-
-        lineRenderer.positionCount = vertexPositions.Length;
-        Vector3[] vertexPositions3 = new Vector3[vertexPositions.Length];
-        for (int i = 0; i < vertexPositions.Length; i++)
-        {
-            vertexPositions3[i] = vertexPositions[i];
-        }
-        lineRenderer.SetPositions(vertexPositions3);
     }
 }

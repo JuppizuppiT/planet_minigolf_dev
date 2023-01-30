@@ -75,39 +75,43 @@ public class GameLogic
     }
 
     public const float TickHz = 1000;
-    public float GameTick { get; private set; }
     public ICelestial[] Celestials { get; private set; }
     public Vector2 BallStartPosition { get; private set; }
-    public Vector2 BallPosition { get; private set; }
-    public float BallRotation { get; private set; }
     public float BallRadius { get; private set; }
-    public Vector2 BallVelocity { get; private set; }
-    public float BallAngularVelocity { get; private set; }
-    public ICelestial SnapPlanet { get; private set; }
-    public bool Stopped { get; private set; }
-    public float BallHealth { get; private set; }
-    public enum GameState
+
+    public enum GameResult
     {
-        Ongoing,
         GameOverFail,
         GameOverWin
     }
-    public GameState State { get; private set; }
+    public struct GameState
+    {
+        public float GameTick;
+        public Vector2 BallPosition;
+        public float BallRotation;
+        public Vector2 BallVelocity;
+        public float BallAngularVelocity;
+        public ICelestial SnapPlanet;
+        public bool Stopped;
+        public float BallHealth;
+        public GameResult? Result;
+    }
+    public GameState State;
 
     public GameLogic(ICelestial[] celestials, Vector2 ballStartPosition, float ballRadius)
     {
-        GameTick = 0;
+        State.GameTick = 0;
         Celestials = celestials;
         BallStartPosition = ballStartPosition;
-        BallPosition = ballStartPosition;
-        BallRotation = 0;
+        State.BallPosition = ballStartPosition;
+        State.BallRotation = 0;
         BallRadius = ballRadius;
-        BallVelocity = Vector2.zero;
-        BallAngularVelocity = 0;
-        SnapPlanet = null;
-        Stopped = false;
-        BallHealth = 10;
-        State = GameState.Ongoing;
+        State.BallVelocity = Vector2.zero;
+        State.BallAngularVelocity = 0;
+        State.SnapPlanet = null;
+        State.Stopped = false;
+        State.BallHealth = 10;
+        State.Result = null;
     }
 
     public void TickAdvance(Vector2 shot, bool heal, uint ticks = 1)
@@ -127,30 +131,30 @@ public class GameLogic
 
     private void Tick(Vector2 shot, bool healPlanet)
     {
-        if (State != GameState.Ongoing)
+        if (State.Result != null)
         {
             return;
         }
 
         foreach (ICelestial celestial in Celestials)
         {
-            float distanceToBall = (BallPosition - celestial.Position).magnitude;
+            float distanceToBall = (State.BallPosition - celestial.Position).magnitude;
             float surfaceDistance = distanceToBall - (celestial.Radius + BallRadius);
             if (surfaceDistance < 0)
             {
-                BallHealth -= celestial.DamagePerSecond / TickHz;
+                State.BallHealth -= celestial.DamagePerSecond / TickHz;
 
                 if (celestial is Goal)
                 {
-                    State = GameState.GameOverWin;
+                    State.Result = GameResult.GameOverWin;
                     return;
                 }
             }
         }
 
-        if (BallHealth <= 0)
+        if (State.BallHealth <= 0)
         {
-            State = GameState.GameOverFail;
+            State.Result = GameResult.GameOverFail;
             return;
         }
 
@@ -161,10 +165,10 @@ public class GameLogic
     {
         if (shot != Vector2.zero)
         {
-            Stopped = false;
+            State.Stopped = false;
         }
 
-        Vector2 acceleration = CalculateAccelerationNew(BallPosition);
+        Vector2 acceleration = CalculateAccelerationNew(State.BallPosition);
 
         // Find nearest celestial (nearestCelestial should always be SnapPlanet when snapped)
         ICelestial nearestCelestial = null;
@@ -173,7 +177,7 @@ public class GameLogic
             float lowestSurfaceDistance = 0;
             foreach (ICelestial celestial in Celestials)
             {
-                float distanceToBall = (BallPosition - celestial.Position).magnitude;
+                float distanceToBall = (State.BallPosition - celestial.Position).magnitude;
                 float surfaceDistance = distanceToBall - (celestial.Radius + BallRadius);
 
                 if (surfaceDistance < lowestSurfaceDistance || nearestCelestial == null)
@@ -194,22 +198,22 @@ public class GameLogic
         Vector2 tangentialSpeed = Vector2.zero;
         Vector2 radialAcceleration = Vector2.zero;
         Vector2 tangentialAcceleration = Vector2.zero;
-        if (SnapPlanet != null || isColliding)
+        if (State.SnapPlanet != null || isColliding)
         {
-            Vector2 planetToBall = BallPosition - nearestCelestial.Position;
+            Vector2 planetToBall = State.BallPosition - nearestCelestial.Position;
 
-            radialSpeed = Vector3.Project(BallVelocity, planetToBall);
-            tangentialSpeed = Vector3.Project(BallVelocity, Vector2.Perpendicular(planetToBall));
+            radialSpeed = Vector3.Project(State.BallVelocity, planetToBall);
+            tangentialSpeed = Vector3.Project(State.BallVelocity, Vector2.Perpendicular(planetToBall));
 
             radialAcceleration = Vector3.Project(acceleration, planetToBall);
             tangentialAcceleration = Vector3.Project(acceleration, Vector2.Perpendicular(planetToBall).normalized);
         }
 
         // Handle snapping
-        if (SnapPlanet != null || isColliding)
+        if (State.SnapPlanet != null || isColliding)
         {
             bool snapCriterion = false;
-            Vector2 planetToBall = BallPosition - nearestCelestial.Position;
+            Vector2 planetToBall = State.BallPosition - nearestCelestial.Position;
             float accelerationDirection = Vector2.Dot(radialAcceleration, planetToBall);
             if (accelerationDirection < 0 && radialAcceleration.magnitude > Mathf.Pow(tangentialSpeed.magnitude, 2) / nearestCelestial.Radius)
             {
@@ -218,93 +222,93 @@ public class GameLogic
 
             // Check if the ball should get snapped to a planet
             //Debug.Log(radialSpeed.magnitude);
-            if (SnapPlanet == null && snapCriterion && radialSpeed.magnitude < 20)
+            if (State.SnapPlanet == null && snapCriterion && radialSpeed.magnitude < 20)
             {
-                SnapPlanet = nearestCelestial;
-                BallVelocity = tangentialSpeed;
+                State.SnapPlanet = nearestCelestial;
+                State.BallVelocity = tangentialSpeed;
                 radialSpeed = Vector2.zero;
-                BallPosition = nearestCelestial.Position + (nearestCelestial.Radius + BallRadius) * (BallPosition - nearestCelestial.Position).normalized;
+                State.BallPosition = nearestCelestial.Position + (nearestCelestial.Radius + BallRadius) * (State.BallPosition - nearestCelestial.Position).normalized;
 
                 Debug.Log("Snapped!");
             }
 
             // Check if the ball should get unsnapped
-            if (SnapPlanet != null && (!snapCriterion || shot != Vector2.zero))
+            if (State.SnapPlanet != null && (!snapCriterion || shot != Vector2.zero))
             {
-                SnapPlanet = null;
+                State.SnapPlanet = null;
             }
         }
 
         // Check if the ball should be stopped
-        if (SnapPlanet != null)
+        if (State.SnapPlanet != null)
         {
-            if (/*tangentialAcceleration.magnitude < 0.5f && */BallVelocity.magnitude < 0.5f)
+            if (/*tangentialAcceleration.magnitude < 0.5f && */State.BallVelocity.magnitude < 0.5f)
             {
-                BallVelocity = Vector2.zero;
-                Stopped = true;
+                State.BallVelocity = Vector2.zero;
+                State.Stopped = true;
             }
         }
 
-        if (Stopped)
+        if (State.Stopped)
         {
             return;
         }
 
-        if (SnapPlanet == null)
+        if (State.SnapPlanet == null)
         {
-            BallVelocity += acceleration / TickHz;
-            BallVelocity += shot;
+            State.BallVelocity += acceleration / TickHz;
+            State.BallVelocity += shot;
 
             if (isColliding)
             {
-                Vector2 planetToBall = BallPosition - nearestCelestial.Position;
-                float speedDirection = (Vector2.Dot(BallVelocity, planetToBall) < 0 ? -1 : 1);
+                Vector2 planetToBall = State.BallPosition - nearestCelestial.Position;
+                float speedDirection = (Vector2.Dot(State.BallVelocity, planetToBall) < 0 ? -1 : 1);
                 if (speedDirection < 0)
                 {
-                    radialSpeed = Vector3.Project(BallVelocity, planetToBall);
+                    radialSpeed = Vector3.Project(State.BallVelocity, planetToBall);
                     Vector2 tangent = Vector2.Perpendicular(planetToBall);
-                    tangentialSpeed = Vector3.Project(BallVelocity, tangent);
+                    tangentialSpeed = Vector3.Project(State.BallVelocity, tangent);
                     float tangentialSpeedDirection = (Vector2.Dot(tangentialSpeed, tangent) < 0 ? -1 : 1);
 
                     // Cross lerp tangentialSpeed <-> BallAngularVelocity
-                    float newAngularVelocity = Mathf.Lerp(BallAngularVelocity, tangentialSpeedDirection * tangentialSpeed.magnitude / BallRadius, 0.5f);
-                    tangentialSpeed = Vector2.Lerp(tangentialSpeed, BallAngularVelocity * BallRadius * tangent.normalized, 0.3f);
-                    BallAngularVelocity = newAngularVelocity;
+                    float newAngularVelocity = Mathf.Lerp(State.BallAngularVelocity, tangentialSpeedDirection * tangentialSpeed.magnitude / BallRadius, 0.5f);
+                    tangentialSpeed = Vector2.Lerp(tangentialSpeed, State.BallAngularVelocity * BallRadius * tangent.normalized, 0.3f);
+                    State.BallAngularVelocity = newAngularVelocity;
 
-                    BallVelocity = tangentialSpeed - 0.8f * radialSpeed;
+                    State.BallVelocity = tangentialSpeed - 0.8f * radialSpeed;
                 }
                 // Set ball to surface
-                BallPosition = nearestCelestial.Position + (nearestCelestial.Radius + BallRadius) * (BallPosition - nearestCelestial.Position).normalized;
+                State.BallPosition = nearestCelestial.Position + (nearestCelestial.Radius + BallRadius) * (State.BallPosition - nearestCelestial.Position).normalized;
             }
 
-            BallPosition += BallVelocity / TickHz;
-            BallRotation += BallAngularVelocity / TickHz;
+            State.BallPosition += State.BallVelocity / TickHz;
+            State.BallRotation += State.BallAngularVelocity / TickHz;
 
             float drag = 0.0005f;
-            BallVelocity -= Mathf.Pow(BallVelocity.magnitude, 2) * drag * BallVelocity.normalized / TickHz;
+            State.BallVelocity -= Mathf.Pow(State.BallVelocity.magnitude, 2) * drag * State.BallVelocity.normalized / TickHz;
             float angularDrag = 0.01f;
-            BallAngularVelocity -= Mathf.Sign(BallAngularVelocity) * Mathf.Pow(BallAngularVelocity, 2) * angularDrag / TickHz;
+            State.BallAngularVelocity -= Mathf.Sign(State.BallAngularVelocity) * Mathf.Pow(State.BallAngularVelocity, 2) * angularDrag / TickHz;
         }
         else
         {
-            BallVelocity += acceleration / TickHz;
+            State.BallVelocity += acceleration / TickHz;
 
             // Update tangential speed
-            Vector2 normal = (BallPosition - SnapPlanet.Position).normalized;
+            Vector2 normal = (State.BallPosition - State.SnapPlanet.Position).normalized;
             Vector2 tangent = Vector2.Perpendicular(normal);
-            tangentialSpeed = Vector3.Project(BallVelocity, tangent);
+            tangentialSpeed = Vector3.Project(State.BallVelocity, tangent);
             float tangentialSpeedDirection = (Vector2.Dot(tangentialSpeed, tangent) < 0 ? -1 : 1);
 
-            BallAngularVelocity = tangentialSpeedDirection * tangentialSpeed.magnitude / BallRadius;
+            State.BallAngularVelocity = tangentialSpeedDirection * tangentialSpeed.magnitude / BallRadius;
 
-            BallPosition += tangentialSpeed / TickHz;
-            BallRotation += BallAngularVelocity / TickHz;
+            State.BallPosition += tangentialSpeed / TickHz;
+            State.BallRotation += State.BallAngularVelocity / TickHz;
 
             // Set ball to surface
-            BallPosition = SnapPlanet.Position + (SnapPlanet.Radius + BallRadius) * (BallPosition - SnapPlanet.Position).normalized;
+            State.BallPosition = State.SnapPlanet.Position + (State.SnapPlanet.Radius + BallRadius) * (State.BallPosition - State.SnapPlanet.Position).normalized;
 
             // Rotate old tangential speed
-            normal = (BallPosition - SnapPlanet.Position).normalized;
+            normal = (State.BallPosition - State.SnapPlanet.Position).normalized;
             tangent = Vector2.Perpendicular(normal);
             tangentialSpeed = tangentialSpeed.magnitude * tangentialSpeedDirection * tangent;
 
@@ -315,11 +319,11 @@ public class GameLogic
             float constantDrag = 1;
             tangentialSpeed -= tangentialSpeed.normalized * constantDrag / TickHz;
 
-            BallVelocity = tangentialSpeed;
+            State.BallVelocity = tangentialSpeed;
         }
 
         // Wrap BallRotation to range 0 - 2*pi
-        BallRotation -= 2 * Mathf.PI * Mathf.Floor(BallRotation / (2 * Mathf.PI));
+        State.BallRotation -= 2 * Mathf.PI * Mathf.Floor(State.BallRotation / (2 * Mathf.PI));
     }
 
     public Vector2 CalculateAcceleration(Vector2 position)
@@ -361,8 +365,8 @@ public class GameLogic
             Vector2 accelerationVec = ballPlanetVec * acceleration;
             totalAcceleration += accelerationVec;
 
-            // remember gravitational acceleration of closest planet
-            float distanceToBall = (BallPosition - celestial.Position).magnitude;
+            // Remember gravitational acceleration of closest planet
+            float distanceToBall = (State.BallPosition - celestial.Position).magnitude;
             float surfaceDistance = distanceToBall - (celestial.Radius + BallRadius);
 
             if (surfaceDistance < closestPlanetSurfDist || nearestCelestial == null)
@@ -383,7 +387,7 @@ public class GameLogic
         }
 
         // Check if/where the ball is in the recenter band
-        Vector2 ballToCenterVec = Vector2.zero - position;
+        Vector2 ballToCenterVec = Vector2.zero - position; // TODO: calculate level center and bounding box
         float distanceToCenter = ballToCenterVec.magnitude;
         float recenterGravityMinRadius = 900;
         float recenterGravityMaxRadius = 1400;
