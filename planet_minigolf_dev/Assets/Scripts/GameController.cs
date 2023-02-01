@@ -136,7 +136,7 @@ public class GameController : MonoBehaviour
             if (ClickDownTimestamp != null)
             {
                 float speed = 1000 * AimCharge;
-
+                FindObjectOfType<AudioManager>().Play("PlayerShoot");
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 targetVec = (mousePos - Game.State.BallPosition).normalized;
                 shotVelocity = targetVec * speed;
