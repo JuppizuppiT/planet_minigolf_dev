@@ -154,6 +154,7 @@ public class GameController : MonoBehaviour
         if (Game.State.Result == GameLogic.GameResult.GameOverFail)
         {
             Debug.Log("Game Over Fail!");
+            FindObjectOfType<AudioManager>().Play("PlayerDeath");
             GameOverPanel.SetActive(true);
             GameOverReason.GetComponent<TextMeshProUGUI>().text = "You died!";
         }
