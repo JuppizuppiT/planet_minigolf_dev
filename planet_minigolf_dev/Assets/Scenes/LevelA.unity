@@ -344,6 +344,7 @@ GameObject:
   - component: {fileID: 190674967}
   - component: {fileID: 190674966}
   - component: {fileID: 190674965}
+  - component: {fileID: 190674969}
   m_Layer: 0
   m_Name: Planet7
   m_TagString: Planet
@@ -455,6 +456,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &190674969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 190674964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2560e029a09716e4e8243f9b5036fcbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InfectionLevel: 0
 --- !u!1 &247500509
 GameObject:
   m_ObjectHideFlags: 0
@@ -692,6 +706,7 @@ GameObject:
   - component: {fileID: 344425691}
   - component: {fileID: 344425690}
   - component: {fileID: 344425693}
+  - component: {fileID: 344425694}
   m_Layer: 0
   m_Name: Planet1
   m_TagString: Planet
@@ -803,6 +818,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &344425694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344425689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2560e029a09716e4e8243f9b5036fcbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InfectionLevel: 0
 --- !u!1 &401402644
 GameObject:
   m_ObjectHideFlags: 0
@@ -1318,6 +1346,7 @@ GameObject:
   - component: {fileID: 639452055}
   - component: {fileID: 639452054}
   - component: {fileID: 639452053}
+  - component: {fileID: 639452057}
   m_Layer: 0
   m_Name: Planet3
   m_TagString: Planet
@@ -1429,6 +1458,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &639452057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 639452052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2560e029a09716e4e8243f9b5036fcbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InfectionLevel: 0
 --- !u!1 &680563004
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,6 +1483,7 @@ GameObject:
   - component: {fileID: 680563007}
   - component: {fileID: 680563006}
   - component: {fileID: 680563005}
+  - component: {fileID: 680563009}
   m_Layer: 0
   m_Name: Planet5
   m_TagString: Planet
@@ -1552,6 +1595,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &680563009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 680563004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2560e029a09716e4e8243f9b5036fcbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InfectionLevel: 0
 --- !u!1 &789340187
 GameObject:
   m_ObjectHideFlags: 0
@@ -1564,6 +1620,7 @@ GameObject:
   - component: {fileID: 789340190}
   - component: {fileID: 789340189}
   - component: {fileID: 789340188}
+  - component: {fileID: 789340192}
   m_Layer: 0
   m_Name: Planet6
   m_TagString: Planet
@@ -1675,6 +1732,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &789340192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789340187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2560e029a09716e4e8243f9b5036fcbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InfectionLevel: 0
 --- !u!1 &802457551
 GameObject:
   m_ObjectHideFlags: 0
@@ -1687,7 +1757,7 @@ GameObject:
   - component: {fileID: 802457554}
   - component: {fileID: 802457553}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RemainingMovesText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2258,6 +2328,7 @@ GameObject:
   - component: {fileID: 1180700311}
   - component: {fileID: 1180700310}
   - component: {fileID: 1180700309}
+  - component: {fileID: 1180700313}
   m_Layer: 0
   m_Name: Planet4
   m_TagString: Planet
@@ -2369,6 +2440,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1180700313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180700308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2560e029a09716e4e8243f9b5036fcbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InfectionLevel: 0
 --- !u!1 &1207980850
 GameObject:
   m_ObjectHideFlags: 0
@@ -2830,6 +2914,7 @@ GameObject:
   - component: {fileID: 1443610534}
   - component: {fileID: 1443610533}
   - component: {fileID: 1443610532}
+  - component: {fileID: 1443610536}
   m_Layer: 0
   m_Name: Planet2
   m_TagString: Planet
@@ -2941,6 +3026,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1443610536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1443610531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2560e029a09716e4e8243f9b5036fcbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InfectionLevel: 0
 --- !u!1 &1478365208
 GameObject:
   m_ObjectHideFlags: 0
@@ -2974,6 +3072,7 @@ MonoBehaviour:
   PausePanel: {fileID: 1626198062}
   GameOverPanel: {fileID: 1298442198}
   GameOverReason: {fileID: 409883712}
+  TotalMoves: 3
 --- !u!4 &1478365210
 Transform:
   m_ObjectHideFlags: 0
