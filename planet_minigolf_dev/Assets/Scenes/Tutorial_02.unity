@@ -995,8 +995,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 0
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 078a6f411b332ca459971680acbcd81b, type: 2}
+  m_sharedMaterial: {fileID: -4078533165541141242, guid: 078a6f411b332ca459971680acbcd81b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1020,8 +1020,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 100
-  m_fontSizeBase: 100
+  m_fontSize: 80
+  m_fontSizeBase: 80
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1265,8 +1265,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -617.72, y: -361.15}
-  m_SizeDelta: {x: 652.57, y: 100.7}
+  m_AnchoredPosition: {x: -600, y: -380}
+  m_SizeDelta: {x: 700, y: 100.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1108640120
 MonoBehaviour:
@@ -1290,8 +1290,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Here is the amount of shots you have to finish this level:'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 078a6f411b332ca459971680acbcd81b, type: 2}
+  m_sharedMaterial: {fileID: -4078533165541141242, guid: 078a6f411b332ca459971680acbcd81b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1315,8 +1315,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2494,7 +2494,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -3.0518, y: 0.6957}
-  m_SizeDelta: {x: 266.3645, y: 36.0849}
+  m_SizeDelta: {x: 400, y: 36.0849}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1534319758
 MonoBehaviour:
@@ -2518,8 +2518,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: This star is not your friend!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ba829276d59c4e444882c1e9f3904dd0, type: 2}
+  m_sharedMaterial: {fileID: 5630270621768071506, guid: ba829276d59c4e444882c1e9f3904dd0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2543,8 +2543,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2775,7 +2775,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 270, y: 215}
+  m_AnchoredPosition: {x: 379, y: 240}
   m_SizeDelta: {x: 16.6016, y: 5.1212}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1966712198
