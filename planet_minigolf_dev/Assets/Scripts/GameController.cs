@@ -24,6 +24,7 @@ public class GameController : MonoBehaviour
     private float AimCharge;
     private bool HealActive;
     private int HealCounter;
+    private int MaxInfectionLevel;
 
     void Start()
     {
@@ -51,6 +52,8 @@ public class GameController : MonoBehaviour
         deadlyFog.CopyTo(Celestials, goals.Length + suns.Length + planets.Length);
         pills.CopyTo(Celestials, goals.Length + suns.Length + planets.Length + deadlyFog.Length);
 
+        MaxInfectionLevel = 1;
+
         GameLogic.ICelestial[] abc = new GameLogic.ICelestial[Celestials.Length];
         for (int i = 0; i < Celestials.Length; i++)
         {
@@ -66,9 +69,14 @@ public class GameController : MonoBehaviour
             }
             else if (Celestials[i].tag == "Planet")
             {
+                int infectionLevel = Celestials[i].GetComponent<Planet>().InfectionLevel;
+                if (infectionLevel > MaxInfectionLevel)
+                {
+                    MaxInfectionLevel = infectionLevel;
+                }
                 abc[i] = new GameLogic.Planet((Vector2)Celestials[i].transform.position + Celestials[i].GetComponent<CircleCollider2D>().offset,
                                               Celestials[i].GetComponent<CircleCollider2D>().radius * Celestials[i].transform.localScale.x,
-                                              Celestials[i].GetComponent<Planet>().InfectionLevel);
+                                              infectionLevel);
             }
             else if (Celestials[i].tag == "DeadlyFog")
             {
@@ -106,6 +114,7 @@ public class GameController : MonoBehaviour
             if (!Paused)
             {
                 PausePanel.SetActive(true);
+                HealActive = false;
             }
             else
             {
@@ -179,7 +188,7 @@ public class GameController : MonoBehaviour
 
         for (int i = 0; i < Celestials.Length; i++)
         {
-            float colorValue = 1.0f - ((float)Game.Celestials[i].InfectionLevel / (float)1);
+            float colorValue = 1.0f - ((float)Game.Celestials[i].InfectionLevel / (float)MaxInfectionLevel);
             Celestials[i].GetComponent<SpriteRenderer>().color = new Color(1.0f, colorValue, colorValue);
 
             Celestials[i].SetActive(Game.State.CelestialVisible[i]);

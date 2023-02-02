@@ -120,6 +120,7 @@ public class GameLogic
         public GameResult? Result;
         public string GameOverMsg;
         public bool[] CelestialVisible;
+        public int LastHealCounter;
     }
     public GameState State;
 
@@ -144,6 +145,7 @@ public class GameLogic
         {
             State.CelestialVisible[i] = true;
         }
+        State.LastHealCounter = 0;
     }
 
     public void TickAdvance(Vector2 shot, bool heal, int healCounter, uint ticks = 1)
@@ -184,6 +186,13 @@ public class GameLogic
                     State.CelestialVisible[i] = false;
                 }
 
+                if (Celestials[i] is Planet && healPlanet && (Celestials[i] as Planet).InfectionLevel > 0 && healCounter > State.LastHealCounter && shot == Vector2.zero)
+                {
+                    (Celestials[i] as Planet).InfectionLevel--;
+                    State.RemainingMoves--;
+                    State.LastHealCounter = healCounter;
+                }
+
                 if (Celestials[i] is Goal)
                 {
                     foreach (ICelestial celestial in Celestials)
@@ -209,10 +218,11 @@ public class GameLogic
             return;
         }
 
-        if (State.SnapPlanet != null && healPlanet && (State.SnapPlanet as Planet).InfectionLevel > 0 && shot == Vector2.zero)
+        if (State.SnapPlanet != null && healPlanet && (State.SnapPlanet as Planet).InfectionLevel > 0 && healCounter > State.LastHealCounter && shot == Vector2.zero)
         {
             (State.SnapPlanet as Planet).InfectionLevel--;
             State.RemainingMoves--;
+            State.LastHealCounter = healCounter;
         }
 
         if (State.RemainingMoves <= 0 && State.Stopped)
