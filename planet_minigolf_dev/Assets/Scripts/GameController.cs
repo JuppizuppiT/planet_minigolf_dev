@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine;
+using System.Linq;
 
 public class GameController : MonoBehaviour
 {
@@ -10,8 +11,10 @@ public class GameController : MonoBehaviour
     public GameObject PausePanel;
     public GameObject GameOverPanel;
     public GameObject GameOverReason;
+    public int TotalMoves;
     private GameObject[] Celestials;
     private GameObject Ball;
+    private GameObject RemainingMovesText;
     private GameObject[] AimDots;
     private GameObject AimLine;
     private GameLogic Game;
@@ -19,6 +22,8 @@ public class GameController : MonoBehaviour
     private float TimeDeltaRemainder;
     private float? ClickDownTimestamp;
     private float AimCharge;
+    private bool HealActive;
+    private int HealCounter;
 
     void Start()
     {
@@ -30,18 +35,21 @@ public class GameController : MonoBehaviour
         AimLine = GameObject.Find("AimLine");
 
         Ball = GameObject.Find("Ball");
+        RemainingMovesText = GameObject.Find("RemainingMovesText");
 
         GameObject[] goals = GameObject.FindGameObjectsWithTag("Goal");
         GameObject[] suns = GameObject.FindGameObjectsWithTag("Sun");
         GameObject[] planets = GameObject.FindGameObjectsWithTag("Planet");
         GameObject[] deadlyFog = GameObject.FindGameObjectsWithTag("DeadlyFog");
+        GameObject[] pills = GameObject.FindGameObjectsWithTag("Pill");
 
         // Combine planets and suns to one array celestials
-        Celestials = new GameObject[goals.Length + suns.Length + planets.Length + deadlyFog.Length];
+        Celestials = new GameObject[goals.Length + suns.Length + planets.Length + deadlyFog.Length + pills.Length];
         goals.CopyTo(Celestials, 0);
         suns.CopyTo(Celestials, goals.Length);
         planets.CopyTo(Celestials, goals.Length + suns.Length);
         deadlyFog.CopyTo(Celestials, goals.Length + suns.Length + planets.Length);
+        pills.CopyTo(Celestials, goals.Length + suns.Length + planets.Length + deadlyFog.Length);
 
         GameLogic.ICelestial[] abc = new GameLogic.ICelestial[Celestials.Length];
         for (int i = 0; i < Celestials.Length; i++)
@@ -59,15 +67,21 @@ public class GameController : MonoBehaviour
             else if (Celestials[i].tag == "Planet")
             {
                 abc[i] = new GameLogic.Planet((Vector2)Celestials[i].transform.position + Celestials[i].GetComponent<CircleCollider2D>().offset,
-                                              Celestials[i].GetComponent<CircleCollider2D>().radius * Celestials[i].transform.localScale.x);
+                                              Celestials[i].GetComponent<CircleCollider2D>().radius * Celestials[i].transform.localScale.x,
+                                              Celestials[i].GetComponent<Planet>().InfectionLevel);
             }
             else if (Celestials[i].tag == "DeadlyFog")
             {
                 abc[i] = new GameLogic.DeadlyFog((Vector2)Celestials[i].transform.position + Celestials[i].GetComponent<CircleCollider2D>().offset,
                                                  Celestials[i].GetComponent<CircleCollider2D>().radius * Celestials[i].transform.localScale.x, 30);
             }
+            else if (Celestials[i].tag == "Pill")
+            {
+                abc[i] = new GameLogic.Pill((Vector2)Celestials[i].transform.position + Celestials[i].GetComponent<CircleCollider2D>().offset,
+                                            Celestials[i].GetComponent<CircleCollider2D>().radius * Celestials[i].transform.localScale.x);
+            }
         }
-        Game = new GameLogic(abc, Ball.transform.position, Ball.GetComponent<CircleCollider2D>().radius * Ball.transform.localScale.x);
+        Game = new GameLogic(abc, Ball.transform.position, Ball.GetComponent<CircleCollider2D>().radius * Ball.transform.localScale.x, TotalMoves);
         //Game.TickAdvance(500 * Vector2.left, false, 1);
 
         Paused = false;
@@ -75,6 +89,9 @@ public class GameController : MonoBehaviour
         TimeDeltaRemainder = 0;
         ClickDownTimestamp = null;
         AimCharge = 0;
+
+        HealActive = false;
+        HealCounter = 0;
     }
 
     void Update()
@@ -145,18 +162,38 @@ public class GameController : MonoBehaviour
             AimCharge = 0;
         }
 
-        Game.TickAdvance(shotVelocity, false, ticksDelta);
+        if (Input.GetKeyDown("space"))
+        {
+            HealActive = true;
+            HealCounter++;
+        }
+        if (Input.GetKeyUp("space"))
+        {
+            HealActive = false;
+        }
+
+        Game.TickAdvance(shotVelocity, HealActive, HealCounter, ticksDelta);
+
         Ball.transform.position = Game.State.BallPosition;
         Ball.transform.rotation = Quaternion.Euler(0, 0, Game.State.BallRotation * 180 / Mathf.PI);
 
+        for (int i = 0; i < Celestials.Length; i++)
+        {
+            float colorValue = 1.0f - ((float)Game.Celestials[i].InfectionLevel / (float)1);
+            Celestials[i].GetComponent<SpriteRenderer>().color = new Color(1.0f, colorValue, colorValue);
+
+            Celestials[i].SetActive(Game.State.CelestialVisible[i]);
+        }
+
         UpdateAimDots();
+        RemainingMovesText.GetComponent<TextMeshProUGUI>().text = Game.State.RemainingMoves.ToString();
 
         if (Game.State.Result == GameLogic.GameResult.GameOverFail)
         {
             Debug.Log("Game Over Fail!");
             FindObjectOfType<AudioManager>().Play("PlayerDeath");
             GameOverPanel.SetActive(true);
-            GameOverReason.GetComponent<TextMeshProUGUI>().text = "You died!";
+            GameOverReason.GetComponent<TextMeshProUGUI>().text = Game.State.GameOverMsg;
         }
         else if (Game.State.Result == GameLogic.GameResult.GameOverWin)
         {
@@ -194,6 +231,9 @@ public class GameController : MonoBehaviour
         if (AimCharge > 0)
         {
             GameLogic.GameState stateBackup = Game.State;
+            bool[] celestialVisibleBackup = new bool[Game.State.CelestialVisible.Length];
+            Game.State.CelestialVisible.CopyTo(celestialVisibleBackup, 0);
+
             AimDotsParent.SetActive(true);
 
             float speed = 1000 * AimCharge;
@@ -201,16 +241,17 @@ public class GameController : MonoBehaviour
             Vector2 targetVec = (mousePos - Game.State.BallPosition).normalized;
             Vector2 shotVelocity = targetVec * speed;
 
-            Game.TickAdvance(shotVelocity, false);
+            Game.TickAdvance(shotVelocity, false, 0);
 
             uint ticksPerDot = 1 * (uint)GameLogic.TickHz / (uint)AimDots.Length;
             foreach (GameObject aimDot in AimDots)
             {
-                Game.TickAdvance(Vector2.zero, false, ticksPerDot);
+                Game.TickAdvance(Vector2.zero, false, 0, ticksPerDot);
                 aimDot.transform.position = Game.State.BallPosition;
             }
 
             Game.State = stateBackup;
+            Game.State.CelestialVisible = celestialVisibleBackup;
         }
         else
         {

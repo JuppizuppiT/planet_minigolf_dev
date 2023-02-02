@@ -11,14 +11,16 @@ public class GameLogic
         float Mass { get; }
         bool Collidable { get; }
         float DamagePerSecond { get; }
+        int InfectionLevel { get; }
     }
 
     public class Planet : ICelestial
     {
-        public Planet(Vector2 position, float radius)
+        public Planet(Vector2 position, float radius, int infectionLevel)
         {
             Position = position;
             Radius = radius;
+            InfectionLevel = infectionLevel;
         }
 
         public Vector2 Position { get; set; }
@@ -26,6 +28,7 @@ public class GameLogic
         public float Mass => Mathf.Pow(Radius, 1.4f);
         public bool Collidable => true;
         public float DamagePerSecond => 0;
+        public int InfectionLevel { get; set; }
     }
 
     public class Sun : ICelestial
@@ -41,6 +44,7 @@ public class GameLogic
         public float Mass => Mathf.Pow(Radius, 1.4f);
         public bool Collidable => false;
         public float DamagePerSecond => 100;
+        public int InfectionLevel => 0;
     }
 
     public class Goal : ICelestial
@@ -56,6 +60,7 @@ public class GameLogic
         public float Mass => Mathf.Pow(2 * Radius, 1.4f);
         public bool Collidable => false;
         public float DamagePerSecond => 0;
+        public int InfectionLevel => 0;
     }
 
     public class DeadlyFog : ICelestial
@@ -72,6 +77,23 @@ public class GameLogic
         public float Mass => 0;
         public bool Collidable => false;
         public float DamagePerSecond { get; set; }
+        public int InfectionLevel => 0;
+    }
+
+    public class Pill : ICelestial
+    {
+        public Pill(Vector2 position, float radius)
+        {
+            Position = position;
+            Radius = radius;
+        }
+
+        public Vector2 Position { get; set; }
+        public float Radius { get; set; }
+        public float Mass => 0;
+        public bool Collidable => false;
+        public float DamagePerSecond => 0;
+        public int InfectionLevel => 0;
     }
 
     public const float TickHz = 1000;
@@ -87,6 +109,7 @@ public class GameLogic
     public struct GameState
     {
         public float GameTick;
+        public int RemainingMoves;
         public Vector2 BallPosition;
         public float BallRotation;
         public Vector2 BallVelocity;
@@ -95,12 +118,15 @@ public class GameLogic
         public bool Stopped;
         public float BallHealth;
         public GameResult? Result;
+        public string GameOverMsg;
+        public bool[] CelestialVisible;
     }
     public GameState State;
 
-    public GameLogic(ICelestial[] celestials, Vector2 ballStartPosition, float ballRadius)
+    public GameLogic(ICelestial[] celestials, Vector2 ballStartPosition, float ballRadius, int remainingMoves)
     {
         State.GameTick = 0;
+        State.RemainingMoves = remainingMoves;
         Celestials = celestials;
         BallStartPosition = ballStartPosition;
         State.BallPosition = ballStartPosition;
@@ -112,40 +138,64 @@ public class GameLogic
         State.Stopped = false;
         State.BallHealth = 10;
         State.Result = null;
+        State.GameOverMsg = "";
+        State.CelestialVisible = new bool[celestials.Length];
+        for (int i = 0; i < celestials.Length; i++)
+        {
+            State.CelestialVisible[i] = true;
+        }
     }
 
-    public void TickAdvance(Vector2 shot, bool heal, uint ticks = 1)
+    public void TickAdvance(Vector2 shot, bool heal, int healCounter, uint ticks = 1)
     {
         if (ticks > 0)
         {
-            Tick(shot, heal);
+            Tick(shot, heal, healCounter);
             ticks--;
         }
 
         while (ticks > 0)
         {
-            Tick(Vector2.zero, false);
+            Tick(Vector2.zero, heal, healCounter);
             ticks--;
         }
     }
 
-    private void Tick(Vector2 shot, bool healPlanet)
+    private void Tick(Vector2 shot, bool healPlanet, int healCounter)
     {
         if (State.Result != null)
         {
             return;
         }
 
-        foreach (ICelestial celestial in Celestials)
+        State.GameTick++;
+
+        for (int i = 0; i < Celestials.Length; i++)
         {
-            float distanceToBall = (State.BallPosition - celestial.Position).magnitude;
-            float surfaceDistance = distanceToBall - (celestial.Radius + BallRadius);
+            float distanceToBall = (State.BallPosition - Celestials[i].Position).magnitude;
+            float surfaceDistance = distanceToBall - (Celestials[i].Radius + BallRadius);
             if (surfaceDistance < 0)
             {
-                State.BallHealth -= celestial.DamagePerSecond / TickHz;
+                State.BallHealth -= Celestials[i].DamagePerSecond / TickHz;
 
-                if (celestial is Goal)
+                if (Celestials[i] is Pill && State.CelestialVisible[i])
                 {
+                    State.RemainingMoves++;
+                    State.CelestialVisible[i] = false;
+                }
+
+                if (Celestials[i] is Goal)
+                {
+                    foreach (ICelestial celestial in Celestials)
+                    {
+                        if (celestial.InfectionLevel > 0)
+                        {
+                            State.Result = GameResult.GameOverFail;
+                            State.GameOverMsg = "Not all planets were healed!";
+                            return;
+                        }
+                    }
+
                     State.Result = GameResult.GameOverWin;
                     return;
                 }
@@ -155,7 +205,26 @@ public class GameLogic
         if (State.BallHealth <= 0)
         {
             State.Result = GameResult.GameOverFail;
+            State.GameOverMsg = "You died!";
             return;
+        }
+
+        if (State.SnapPlanet != null && healPlanet && (State.SnapPlanet as Planet).InfectionLevel > 0 && shot == Vector2.zero)
+        {
+            (State.SnapPlanet as Planet).InfectionLevel--;
+            State.RemainingMoves--;
+        }
+
+        if (State.RemainingMoves <= 0 && State.Stopped)
+        {
+            State.Result = GameResult.GameOverFail;
+            State.GameOverMsg = "No more moves left!";
+            return;
+        }
+
+        if (shot != Vector2.zero)
+        {
+            State.RemainingMoves--;
         }
 
         ProcessPhysicsTick(shot);
@@ -275,7 +344,7 @@ public class GameLogic
                     tangentialSpeed = Vector2.Lerp(tangentialSpeed, State.BallAngularVelocity * BallRadius * tangent.normalized, 0.3f);
                     State.BallAngularVelocity = newAngularVelocity;
 
-                    State.BallVelocity = tangentialSpeed - 0.8f * radialSpeed;
+                    State.BallVelocity = tangentialSpeed - 0.7f * radialSpeed;
                 }
                 // Set ball to surface
                 State.BallPosition = nearestCelestial.Position + (nearestCelestial.Radius + BallRadius) * (State.BallPosition - nearestCelestial.Position).normalized;
@@ -284,7 +353,18 @@ public class GameLogic
             State.BallPosition += State.BallVelocity / TickHz;
             State.BallRotation += State.BallAngularVelocity / TickHz;
 
-            float drag = 0.0005f;
+            ICelestial goalCelestial = null;
+            foreach (ICelestial celestial in Celestials)
+            {
+                if (celestial is Goal)
+                {
+                    goalCelestial = celestial;
+                }
+            }
+
+            float goalSurfDist = (State.BallPosition - goalCelestial.Position).magnitude - BallRadius - goalCelestial.Radius;
+
+            float drag = Mathf.Lerp(0.02f, 0.0005f, Mathf.Clamp01(goalSurfDist / 100));
             State.BallVelocity -= Mathf.Pow(State.BallVelocity.magnitude, 2) * drag * State.BallVelocity.normalized / TickHz;
             float angularDrag = 0.01f;
             State.BallAngularVelocity -= Mathf.Sign(State.BallAngularVelocity) * Mathf.Pow(State.BallAngularVelocity, 2) * angularDrag / TickHz;
