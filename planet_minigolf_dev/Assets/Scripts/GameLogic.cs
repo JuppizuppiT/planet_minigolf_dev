@@ -247,7 +247,7 @@ public class GameLogic
             State.Stopped = false;
         }
 
-        Vector2 acceleration = CalculateAccelerationNew(State.BallPosition);
+        Vector2 acceleration = CalculateAcceleration(State.BallPosition);
 
         // Find nearest celestial (nearestCelestial should always be SnapPlanet when snapped)
         ICelestial nearestCelestial = null;
@@ -417,24 +417,6 @@ public class GameLogic
     }
 
     public Vector2 CalculateAcceleration(Vector2 position)
-    {
-        Vector2 acceleration = Vector2.zero;
-
-        float distanceExponent = 1.3f;
-        foreach (ICelestial celestial in Celestials)
-        {
-            Vector2 diff = celestial.Position - position;
-            Vector2 direction = diff.normalized;
-            float distance = diff.magnitude;
-            //float gravity_factor = 9000;
-
-            acceleration += 0.3f * celestial.Mass /* * gravity_factor*/ * direction / Mathf.Pow(distance, distanceExponent);
-        }
-
-        return 1000 * acceleration;
-    }
-
-    public Vector2 CalculateAccelerationNew(Vector2 position)
     {
         Vector2 totalAcceleration = Vector2.zero;
         Vector2 closestPlanetAccelerationVec = Vector2.zero;
