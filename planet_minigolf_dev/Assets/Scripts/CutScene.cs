@@ -14,7 +14,7 @@ public class CutScene : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        player.transform.position = new Vector3(- Mathf.Sin(Time.time * speed) * 0.7f * amount - 4, 0, 0);
-        mate.transform.position = new Vector3(Mathf.Sin(Time.time * speed) * amount + 4, 0, 0);
+        player.transform.position = new Vector3(- Mathf.Sin(Time.time * speed) * 0.7f * amount  + 4, 0, 0);
+        mate.transform.position = new Vector3(Mathf.Sin(Time.time * speed) * amount - 4, 0, 0);
     }
 }
