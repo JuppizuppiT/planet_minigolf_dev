@@ -17,9 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LevelGoal.unity
     guid: 663b47cec9382234a94ec5b9cfe61169
-  - enabled: 0
-    path: 
-    guid: ae345b88a418ee140b8bd852f37297ca
   - enabled: 1
     path: Assets/Scenes/LevelTest.unity
     guid: 2cda990e2423bbf4892e6590ba056729
@@ -31,5 +28,14 @@ EditorBuildSettings:
     guid: f7e404f4fdbf5fc4faee2eef399a9ea3
   - enabled: 1
     path: Assets/Scenes/Tutorial_03.unity
-    guid: ca2bf9a15914d2b479c2da1019d420be
+    guid: a9127df538ef37b448a2d0765406505d
+  - enabled: 1
+    path: Assets/Scenes/LevelA.unity
+    guid: 6f8a17dbf0d69c248abc79828a65b9ca
+  - enabled: 1
+    path: Assets/Scenes/CutScene.unity
+    guid: 8652e7b59c77bec49b8d9de1700f7f48
+  - enabled: 1
+    path: Assets/Scenes/CutScene2.unity
+    guid: 8d7c9d2d741e21741bc98b2146d6dd3d
   m_configObjects: {}

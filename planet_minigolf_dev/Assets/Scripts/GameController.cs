@@ -3,38 +3,56 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine;
+using System.Linq;
 
 public class GameController : MonoBehaviour
 {
+    public GameObject AimDotsParent;
     public GameObject PausePanel;
     public GameObject GameOverPanel;
     public GameObject GameOverReason;
+    public int TotalMoves;
     private GameObject[] Celestials;
     private GameObject Ball;
+    private GameObject RemainingMovesText;
+    private GameObject[] AimDots;
     private GameObject AimLine;
     private GameLogic Game;
     private bool Paused;
     private float TimeDeltaRemainder;
     private float? ClickDownTimestamp;
     private float AimCharge;
-    private SceneLoader sceneLoader;
+    private bool HealActive;
+    private int HealCounter;
+    private int MaxInfectionLevel;
 
     void Start()
     {
+        AimDots = new GameObject[AimDotsParent.transform.childCount];
+        for (int i = 0; i < AimDotsParent.transform.childCount; i++)
+        {
+            AimDots[i] = AimDotsParent.transform.GetChild(i).gameObject;
+        }
         AimLine = GameObject.Find("AimLine");
+
         Ball = GameObject.Find("Ball");
+        RemainingMovesText = GameObject.Find("RemainingMovesText");
 
         GameObject[] goals = GameObject.FindGameObjectsWithTag("Goal");
         GameObject[] suns = GameObject.FindGameObjectsWithTag("Sun");
         GameObject[] planets = GameObject.FindGameObjectsWithTag("Planet");
         GameObject[] deadlyFog = GameObject.FindGameObjectsWithTag("DeadlyFog");
+        GameObject[] pills = GameObject.FindGameObjectsWithTag("Pill");
 
-        // combine planets and suns to one array celestials
-        Celestials = new GameObject[goals.Length + suns.Length + planets.Length + deadlyFog.Length];
+        // Combine planets and suns to one array celestials
+        Celestials = new GameObject[goals.Length + suns.Length + planets.Length + deadlyFog.Length + pills.Length];
         goals.CopyTo(Celestials, 0);
         suns.CopyTo(Celestials, goals.Length);
         planets.CopyTo(Celestials, goals.Length + suns.Length);
         deadlyFog.CopyTo(Celestials, goals.Length + suns.Length + planets.Length);
+        pills.CopyTo(Celestials, goals.Length + suns.Length + planets.Length + deadlyFog.Length);
+
+        MaxInfectionLevel = 1;
 
         GameLogic.ICelestial[] abc = new GameLogic.ICelestial[Celestials.Length];
         for (int i = 0; i < Celestials.Length; i++)
@@ -51,16 +69,27 @@ public class GameController : MonoBehaviour
             }
             else if (Celestials[i].tag == "Planet")
             {
+                int infectionLevel = Celestials[i].GetComponent<Planet>().InfectionLevel;
+                if (infectionLevel > MaxInfectionLevel)
+                {
+                    MaxInfectionLevel = infectionLevel;
+                }
                 abc[i] = new GameLogic.Planet((Vector2)Celestials[i].transform.position + Celestials[i].GetComponent<CircleCollider2D>().offset,
-                                              Celestials[i].GetComponent<CircleCollider2D>().radius * Celestials[i].transform.localScale.x);
+                                              Celestials[i].GetComponent<CircleCollider2D>().radius * Celestials[i].transform.localScale.x,
+                                              infectionLevel);
             }
             else if (Celestials[i].tag == "DeadlyFog")
             {
                 abc[i] = new GameLogic.DeadlyFog((Vector2)Celestials[i].transform.position + Celestials[i].GetComponent<CircleCollider2D>().offset,
                                                  Celestials[i].GetComponent<CircleCollider2D>().radius * Celestials[i].transform.localScale.x, 30);
             }
+            else if (Celestials[i].tag == "Pill")
+            {
+                abc[i] = new GameLogic.Pill((Vector2)Celestials[i].transform.position + Celestials[i].GetComponent<CircleCollider2D>().offset,
+                                            Celestials[i].GetComponent<CircleCollider2D>().radius * Celestials[i].transform.localScale.x);
+            }
         }
-        Game = new GameLogic(abc, Ball.transform.position, Ball.GetComponent<CircleCollider2D>().radius * Ball.transform.localScale.x);
+        Game = new GameLogic(abc, Ball.transform.position, Ball.GetComponent<CircleCollider2D>().radius * Ball.transform.localScale.x, TotalMoves);
         //Game.TickAdvance(500 * Vector2.left, false, 1);
 
         Paused = false;
@@ -68,11 +97,14 @@ public class GameController : MonoBehaviour
         TimeDeltaRemainder = 0;
         ClickDownTimestamp = null;
         AimCharge = 0;
+
+        HealActive = false;
+        HealCounter = 0;
     }
 
     void Update()
     {
-        if (Game.State != GameLogic.GameState.Ongoing)
+        if (Game.State.Result != null)
         {
             return;
         }
@@ -82,6 +114,7 @@ public class GameController : MonoBehaviour
             if (!Paused)
             {
                 PausePanel.SetActive(true);
+                HealActive = false;
             }
             else
             {
@@ -103,7 +136,7 @@ public class GameController : MonoBehaviour
 
         Vector2 shotVelocity = Vector2.zero;
 
-        if (Input.GetMouseButtonDown(0) && Game.Stopped)
+        if (Input.GetMouseButtonDown(0) && Game.State.Stopped)
         {
             ClickDownTimestamp = Time.time;
         }
@@ -129,34 +162,54 @@ public class GameController : MonoBehaviour
             if (ClickDownTimestamp != null)
             {
                 float speed = 1000 * AimCharge;
-
+                FindObjectOfType<AudioManager>().Play("PlayerShoot");
                 Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector2 targetVec = (mousePos - Game.BallPosition).normalized;
+                Vector2 targetVec = (mousePos - Game.State.BallPosition).normalized;
                 shotVelocity = targetVec * speed;
             }
             ClickDownTimestamp = null;
             AimCharge = 0;
         }
 
-        Game.TickAdvance(shotVelocity, false, ticksDelta);
-        Ball.transform.position = Game.BallPosition;
-        Ball.transform.rotation = Quaternion.Euler(0, 0, Game.BallRotation * 180 / Mathf.PI);
+        if (Input.GetKeyDown("space"))
+        {
+            HealActive = true;
+            HealCounter++;
+        }
+        if (Input.GetKeyUp("space"))
+        {
+            HealActive = false;
+        }
 
-        UpdateAimLine();
+        Game.TickAdvance(shotVelocity, HealActive, HealCounter, ticksDelta);
 
-        if (Game.State == GameLogic.GameState.GameOverFail)
+        Ball.transform.position = Game.State.BallPosition;
+        Ball.transform.rotation = Quaternion.Euler(0, 0, Game.State.BallRotation * 180 / Mathf.PI);
+
+        for (int i = 0; i < Celestials.Length; i++)
+        {
+            float colorValue = 1.0f - ((float)Game.Celestials[i].InfectionLevel / (float)MaxInfectionLevel);
+            Celestials[i].GetComponent<SpriteRenderer>().color = new Color(1.0f, colorValue, colorValue);
+
+            Celestials[i].SetActive(Game.State.CelestialVisible[i]);
+        }
+
+        UpdateAimDots();
+        RemainingMovesText.GetComponent<TextMeshProUGUI>().text = Game.State.RemainingMoves.ToString();
+
+        if (Game.State.Result == GameLogic.GameResult.GameOverFail)
         {
             Debug.Log("Game Over Fail!");
+            FindObjectOfType<AudioManager>().Play("PlayerDeath");
             GameOverPanel.SetActive(true);
-            GameOverReason.GetComponent<TextMeshProUGUI>().text = "You died!";
+            GameOverReason.GetComponent<TextMeshProUGUI>().text = Game.State.GameOverMsg;
         }
-        else if (Game.State == GameLogic.GameState.GameOverWin)
+        else if (Game.State.Result == GameLogic.GameResult.GameOverWin)
         {
             ResetBallAfterGoal();
             Debug.Log("Game Over Win!");
         }
     }
-
 
     void ResetBallAfterGoal()
     {
@@ -173,7 +226,7 @@ public class GameController : MonoBehaviour
                 break;
             case "Tutorial_03":
                 FindObjectOfType<AudioManager>().Play("BlackTravel");
-                SceneManager.LoadScene("Level2");
+                SceneManager.LoadScene("LevelA");
                 break;
             default:
                 FindObjectOfType<AudioManager>().Play("BlackTravel");
@@ -182,52 +235,36 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void UpdateAimLine()
+    void UpdateAimDots()
     {
-        LineRenderer lineRenderer = AimLine.GetComponent<LineRenderer>();
-        float lineLength = 20;
-
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 targetVec = (mousePos - Game.BallPosition).normalized;
-
-        Vector2 aimLineOrigin = Game.BallPosition + targetVec * 6;
-        Vector2 aimLinePeak;
-        if (Game.Stopped)
+        if (AimCharge > 0)
         {
-            if (AimCharge > 0)
-            {
-                float length = lineLength * AimCharge;
+            GameLogic.GameState stateBackup = Game.State;
+            bool[] celestialVisibleBackup = new bool[Game.State.CelestialVisible.Length];
+            Game.State.CelestialVisible.CopyTo(celestialVisibleBackup, 0);
 
-                lineRenderer.startColor = Color.red;
-                lineRenderer.endColor = Color.red;
-                aimLinePeak = aimLineOrigin + targetVec * length;
-            }
-            else
+            AimDotsParent.SetActive(true);
+
+            float speed = 1000 * AimCharge;
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 targetVec = (mousePos - Game.State.BallPosition).normalized;
+            Vector2 shotVelocity = targetVec * speed;
+
+            Game.TickAdvance(shotVelocity, false, 0);
+
+            uint ticksPerDot = 1 * (uint)GameLogic.TickHz / (uint)AimDots.Length;
+            foreach (GameObject aimDot in AimDots)
             {
-                lineRenderer.startColor = Color.white;
-                lineRenderer.endColor = Color.white;
-                aimLinePeak = aimLineOrigin + targetVec * lineLength;
+                Game.TickAdvance(Vector2.zero, false, 0, ticksPerDot);
+                aimDot.transform.position = Game.State.BallPosition;
             }
+
+            Game.State = stateBackup;
+            Game.State.CelestialVisible = celestialVisibleBackup;
         }
         else
         {
-            aimLinePeak = aimLineOrigin;
+            AimDotsParent.SetActive(false);
         }
-
-
-        DrawAimLine(new Vector2[] { aimLineOrigin, aimLinePeak });
-    }
-
-    void DrawAimLine(Vector2[] vertexPositions)
-    {
-        LineRenderer lineRenderer = AimLine.GetComponent<LineRenderer>();
-
-        lineRenderer.positionCount = vertexPositions.Length;
-        Vector3[] vertexPositions3 = new Vector3[vertexPositions.Length];
-        for (int i = 0; i < vertexPositions.Length; i++)
-        {
-            vertexPositions3[i] = vertexPositions[i];
-        }
-        lineRenderer.SetPositions(vertexPositions3);
     }
 }
