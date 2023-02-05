@@ -6,8 +6,8 @@ public class CameraFollow : MonoBehaviour {
     public Transform black_hole;
 
     private Camera cam;
-    private float minHeight = 10f;
-    private float maxHeight = 50f;
+    private float minHeight = 200f;
+    private float maxHeight = 700f;
     private bool focusGoal = true;
     private float zoomValue = 0.65f;
 
@@ -43,7 +43,7 @@ public class CameraFollow : MonoBehaviour {
         float height = (player_to_goal_vector.magnitude / 2) / Mathf.Tan(30 * (Mathf.PI / 180));
         transform.position = new_camera_pos_xy + new Vector3(0, 0, -5);
         height = (height < minHeight) ? minHeight : height;
-        cam.orthographicSize = height * (0.4f + (1.0f - 0.4f) * zoomValue);
+        cam.orthographicSize = height * (0.5f + (1.0f - 0.5f) * zoomValue);
     }
 
     void setPlayerCam()
