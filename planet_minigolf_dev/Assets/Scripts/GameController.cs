@@ -228,6 +228,10 @@ public class GameController : MonoBehaviour
                 FindObjectOfType<AudioManager>().Play("BlackTravel");
                 SceneManager.LoadScene("LevelA");
                 break;
+            case "LevelA":
+                FindObjectOfType<AudioManager>().Play("BlackTravel");
+                SceneManager.LoadScene("LevelB");
+                break;
             default:
                 FindObjectOfType<AudioManager>().Play("BlackTravel");
                 SceneManager.LoadScene("LevelGoal");
