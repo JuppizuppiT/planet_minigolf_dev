@@ -925,7 +925,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7194980101642841426, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
       propertyPath: sounds.Array.data[1].name
-      value: Theme2
+      value: Theme
       objectReference: {fileID: 0}
     - target: {fileID: 8923992185503254358, guid: ca51ca27f874440489c7a95fcd77ddb1, type: 3}
       propertyPath: m_Name
